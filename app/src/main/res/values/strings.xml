@@ -1,0 +1,12 @@
+<resources>
+  <string name="app_name">Cygnus School App</string>
+  <string name="drawer_open">Open drawer</string>
+  <string name="drawer_close">Close drawer</string>
+  <string name="next">Next</string>
+
+  <string-array name="schools">
+    <item>--Not Selected--</item>
+    <item>National University of Sciences &amp; Technology</item>
+    <item>Technische Universität Kaiserslautern</item>
+  </string-array>
+</resources>
