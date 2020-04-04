@@ -6,10 +6,16 @@
       android:icon="@mipmap/ic_launcher"
       android:label="@string/app_name"
       android:logo="@mipmap/ic_launcher"
+      android:name=".CygnusApp"
       android:roundIcon="@mipmap/ic_launcher_round"
       android:theme="@style/AppTheme">
 
-
+    <activity android:name="com.cygnus.ActivitySplash">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
 
   </application>
 
