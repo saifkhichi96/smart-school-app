@@ -1,9 +1,9 @@
 package com.cygnus
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.database.FirebaseDatabase
 
 /**
  * SplashActivity is first called when the app starts.
@@ -14,20 +14,22 @@ import com.google.firebase.database.FirebaseDatabase
  * @author saifkhichi96
  * @since 1.0.0
  */
-class ActivitySplash : AppCompatActivity() {
+class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
 
-        Handler().postDelayed({
-            startApp()
-        }, 1500L)
+        // auto-start app after 1.5 seconds
+        Handler().postDelayed({ startApp() }, 1500L)
     }
 
+    /**
+     * Redirect to the first screen in the app.
+     */
     private fun startApp() {
-        // TODO: Start the application
+        startActivity(Intent(applicationContext, SignInActivity::class.java))
+        finish()
     }
 
 }
