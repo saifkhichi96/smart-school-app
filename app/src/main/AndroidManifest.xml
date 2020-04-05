@@ -3,17 +3,25 @@
           package="com.cygnus">
 
   <application
+      android:name=".CygnusApp"
       android:icon="@mipmap/ic_launcher"
       android:label="@string/app_name"
       android:logo="@mipmap/ic_launcher"
-      android:name=".CygnusApp"
       android:roundIcon="@mipmap/ic_launcher_round"
       android:theme="@style/AppTheme">
 
-    <activity android:name="com.cygnus.SplashActivity">
+    <activity android:name=".SplashActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data
+            android:host="cygnus.page.link"
+            android:scheme="https"/>
       </intent-filter>
     </activity>
 
