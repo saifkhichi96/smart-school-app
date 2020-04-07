@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.cygnus.utils.DynamicLinksUtils
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.ktx.Firebase
@@ -72,9 +73,16 @@ class SplashActivity : AppCompatActivity() {
      * @throws Exception An exception is raised if the [deepLink] is not parseable.
      */
     private fun parseDeepLink(deepLink: Uri) {
-        val target = Uri.parse(deepLink.getQueryParameter("continueUrl"))
+        val target = Uri.parse(deepLink.getQueryParameter(CygnusApp.PARAM_LINK_TARGET))
         when (target.path) {
-            // TODO: Take appropriate action
+            DynamicLinksUtils.ACTION_REGISTRATION -> {
+                val i = Intent(this, SignUpActivity::class.java)
+                i.putExtra(CygnusApp.EXTRA_REFERRAL_CODE, target.getQueryParameter(CygnusApp.PARAM_REFERRAL_CODE))
+                i.putExtra(CygnusApp.EXTRA_ACCOUNT_TYPE, target.getQueryParameter(CygnusApp.PARAM_ACCOUNT_TYPE))
+                i.data = deepLink
+
+                startActivity(i)
+            }
         }
     }
 

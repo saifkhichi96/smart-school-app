@@ -2,11 +2,11 @@ package com.cygnus.tasks
 
 import co.aspirasoft.tasks.DummyTask
 import co.aspirasoft.tasks.FirebaseTask
+import com.cygnus.CygnusApp
 import com.cygnus.utils.DynamicLinksUtils
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 
 /**
@@ -27,7 +27,7 @@ class InvitationTask(
     /**
      * Location of invitations in Firebase database.
      */
-    private val refPath = "${referral}/invites/"
+    private val invitesRef = CygnusApp.refToInvites(referral)
 
     /**
      * State of the new invitation.
@@ -58,9 +58,7 @@ class InvitationTask(
      * Requests list of existing users.
      */
     override fun init(): Query {
-        return FirebaseDatabase.getInstance()
-                .getReference(refPath)
-                .orderByValue()
+        return invitesRef.orderByValue()
     }
 
     /**
@@ -70,10 +68,7 @@ class InvitationTask(
         return FirebaseAuth.getInstance()
                 .sendSignInLinkToEmail(inviteeEmail, DynamicLinksUtils.createSignUpAction(inviteeType, referral))
                 .addOnSuccessListener {
-                    FirebaseDatabase.getInstance()
-                            .getReference(refPath)
-                            .push()
-                            .setValue("$inviteeEmail:$state")
+                    invitesRef.push().setValue("$inviteeEmail:$state")
                 }
     }
 

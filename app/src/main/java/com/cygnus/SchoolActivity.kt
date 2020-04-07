@@ -15,7 +15,10 @@ import com.cygnus.tasks.InvitationTask
 import com.cygnus.view.EmailsInputDialog
 import com.cygnus.view.LogoutConfirmationDialog
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.GenericTypeIndicator
+import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_school.*
 
 /**
@@ -78,8 +81,7 @@ class SchoolActivity : SecureActivity() {
      * and pending invites in realtime.
      */
     private fun trackSentInvites() {
-        FirebaseDatabase.getInstance()
-                .getReference("${currentUser.id}/invites/")
+        CygnusApp.refToInvites(currentUser.id)
                 .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         var pending = 0

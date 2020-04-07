@@ -34,7 +34,6 @@ class SignInActivity : AppCompatActivity() {
         setContentView(R.layout.activity_sign_in)
 
         signInButton.setOnClickListener { signIn() }
-        signUpButton.setOnClickListener { signUp() }
     }
 
     /**
@@ -74,13 +73,6 @@ class SignInActivity : AppCompatActivity() {
                         }
                     }
         }
-    }
-
-    /**
-     * Redirects to SignUpActivity where user can register for a new account.
-     */
-    private fun signUp() {
-        // TODO: Open sign up activity
     }
 
     /**
