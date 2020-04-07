@@ -7,4 +7,7 @@ class User(var id: String, var name: String, var type: String, var credentials: 
     // no-arg constructor required for Firebase
     constructor() : this("", "", "", Credentials())
 
+    val email: String
+        get() = credentials.email
+
 }

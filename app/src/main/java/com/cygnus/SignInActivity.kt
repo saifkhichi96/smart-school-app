@@ -1,10 +1,12 @@
 package com.cygnus
 
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import co.aspirasoft.util.InputUtils.isNotBlank
+import com.cygnus.model.Credentials
 import com.cygnus.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -14,6 +16,15 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_sign_in.*
 
+/**
+ * SignInActivity is first displayed to all new users.
+ *
+ * Purpose of this activity is to let users log into the app
+ * using their credentials.
+ *
+ * @author saifkhichi96
+ * @since 1.0.0
+ */
 class SignInActivity : AppCompatActivity() {
 
     private val auth = FirebaseAuth.getInstance()
@@ -79,21 +90,38 @@ class SignInActivity : AppCompatActivity() {
      * details from Firebase database to complete the sign-in process.
      */
     private fun onAuthSuccess(firebaseUser: FirebaseUser) {
-        FirebaseDatabase.getInstance()
-                .getReference("users/${firebaseUser.uid}/")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        try {
-                            snapshot.getValue(User::class.java)?.let {
-                                onSignedIn(it)
-                            }
-                        } catch (ex: Exception) {
-                            onFailure(ex)
+        val db = FirebaseDatabase.getInstance()
+        db.getReference("${firebaseUser.uid}/name/")
+                .addListenerForSingleValueEvent(object : SignInEventListener() {
+                    override fun onDataReceived(snapshot: DataSnapshot) {
+                        when {
+                            // when a `School` signs in
+                            snapshot.exists() -> onSignedInAsSchool(snapshot.value.toString(), firebaseUser)
+
+                            // when a regular user signs in, we first need to find out which school
+                            // they are associated with by retrieving their school's id
+                            else -> db.getReference("user_schools/${firebaseUser.uid}")
+                                    .addListenerForSingleValueEvent(object : SignInEventListener() {
+                                        override fun onDataReceived(snapshot: DataSnapshot) {
+                                            snapshot.getValue(String::class.java)?.let { schoolId ->
+                                                onSchoolDetailsReceived(schoolId, firebaseUser)
+                                            }
+                                        }
+                                    })
                         }
                     }
+                })
+    }
 
-                    override fun onCancelled(error: DatabaseError) {
-                        onFailure(error.toException())
+    /**
+     * Callback for when details of [firebaseUser]'s school are received.
+     */
+    private fun onSchoolDetailsReceived(schoolId: String, firebaseUser: FirebaseUser) {
+        FirebaseDatabase.getInstance()
+                .getReference("$schoolId/users/${firebaseUser.uid}/")
+                .addListenerForSingleValueEvent(object : SignInEventListener() {
+                    override fun onDataReceived(snapshot: DataSnapshot) {
+                        snapshot.getValue(User::class.java)?.let { user -> onSignedIn(user) }
                     }
                 })
     }
@@ -108,14 +136,45 @@ class SignInActivity : AppCompatActivity() {
     }
 
     /**
+     * Callback for a `School` signs in.
+     *
+     * @param name name of the school
+     * @param account Firebase account of the school
+     */
+    private fun onSignedInAsSchool(name: String, account: FirebaseUser) {
+        onSignedIn(User(
+                account.uid,
+                name,
+                "School",
+                Credentials(account.email!!, "")
+        ))
+    }
+
+    /**
      * Callback for when an error occurs during the sign-in process.
      *
      * This method is called if authentication fails or user's details
      * could not be fetched from the database.
      */
-    private fun onFailure(ex: Exception) {
-        Toast.makeText(this, ex.message ?: "Sign in failed", Toast.LENGTH_LONG).show()
+    private fun onFailure(ex: Exception?) {
+        Toast.makeText(this, ex?.message ?: "Sign in failed", Toast.LENGTH_LONG).show()
         auth.signOut()
+    }
+
+    private abstract inner class SignInEventListener : ValueEventListener {
+        abstract fun onDataReceived(snapshot: DataSnapshot)
+
+        override fun onDataChange(snapshot: DataSnapshot) {
+            try {
+                onDataReceived(snapshot)
+            } catch (ex: Exception) {
+                onFailure(ex)
+            }
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            onFailure(error.toException())
+        }
     }
 
 }
