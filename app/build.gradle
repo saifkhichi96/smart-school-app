@@ -12,6 +12,7 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0.0"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -46,6 +47,10 @@ dependencies {
 
     // Other UI Components
     implementation 'com.params.stepview:stepview:1.0.1'
+
+    // Utils
+    implementation 'com.google.zxing:core:3.3.2'
+    implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.4'
 }
 
 repositories {

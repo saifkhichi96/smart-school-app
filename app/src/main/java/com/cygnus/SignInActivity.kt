@@ -129,10 +129,17 @@ class SignInActivity : AppCompatActivity() {
     /**
      * Callback for when the sign-in completes.
      *
-     * User is automatically redirected to the main screen in the app.
+     * User is automatically redirected to the appropriate screen in the app.
      */
     private fun onSignedIn(user: User) {
-        // TODO: Open main activity
+        startActivity(Intent(
+                applicationContext,
+                when {
+                    user.type.equals("School", true) -> SchoolActivity::class.java
+                    else -> return // TODO: MainActivity::class.java
+                }
+        ).apply { putExtra(CygnusApp.EXTRA_USER, user) })
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     /**
