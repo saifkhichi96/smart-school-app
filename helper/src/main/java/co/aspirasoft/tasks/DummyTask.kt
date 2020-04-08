@@ -26,7 +26,7 @@ class DummyTask(private val error: Exception?) : Task<Void?>() {
     }
 
     override fun addOnFailureListener(listener: OnFailureListener): Task<Void?> {
-        exception.let { listener.onFailure(it) }
+        exception?.let { listener.onFailure(it) }
         return this
     }
 
