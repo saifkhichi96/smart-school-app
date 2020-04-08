@@ -45,12 +45,10 @@ dependencies {
     implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
-    // Other UI Components
-    implementation 'com.params.stepview:stepview:1.0.1'
-
     // Utils
     implementation 'com.google.zxing:core:3.3.2'
     implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.4'
+    implementation project(":helper")
 }
 
 repositories {
