@@ -1,7 +1,6 @@
 package co.aspirasoft.tasks
 
 import com.google.android.gms.tasks.Task
-import com.google.firebase.database.*
 
 
 /**
@@ -67,7 +66,7 @@ abstract class FirebaseTask : ValueEventListener {
      */
     fun start(onTaskCompleteListener: (Task<Void?>) -> Unit) {
         this.onTaskCompleteListener = onTaskCompleteListener
-        init()?.addListenerForSingleValueEvent(this) ?: onQuerySuccess()
+        init().addListenerForSingleValueEvent(this) ?: onQuerySuccess()
     }
 
 }

@@ -1,8 +1,11 @@
 package com.cygnus
 
 import android.os.Bundle
+import android.util.SparseArray
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import co.aspirasoft.view.WizardViewStep
+import kotlinx.android.synthetic.main.activity_sign_up.*
 
 
 /**
@@ -22,6 +25,9 @@ import androidx.appcompat.app.AppCompatActivity
  */
 class SignUpActivity : AppCompatActivity() {
 
+    // TODO: Create sign up steps
+    private val steps: List<WizardViewStep> = listOf()
+
     lateinit var referralCode: String
     lateinit var accountType: String
     lateinit var emailLink: String
@@ -34,6 +40,12 @@ class SignUpActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_sign_up)
+
+        wizardView.setupWithWizardSteps(supportFragmentManager, steps)
+        wizardView.setOnSubmitListener {
+            // TODO: Handle form data
+        }
 
         // Read sign up parameters from intent
         referralCode = intent.getStringExtra(CygnusApp.EXTRA_REFERRAL_CODE) ?: ""
@@ -74,6 +86,12 @@ class SignUpActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG
         ).show()
         finish()
+    }
+
+    override fun onBackPressed() {
+        if (!wizardView.onBackPressed()) {
+            super.onBackPressed()
+        }
     }
 
 }
