@@ -8,6 +8,7 @@ abstract class BaseModel : Observable(), Serializable {
     override fun notifyObservers() {
         setChanged()
         super.notifyObservers()
+        clearChanged()
     }
 
 }

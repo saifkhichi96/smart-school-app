@@ -14,6 +14,7 @@ object InputUtils {
      * If [isErrorEnabled] is `true`, an appropriate error message is generated.
      */
     fun TextInputEditText.isNotBlank(isErrorEnabled: Boolean = false): Boolean {
+        this.showError(null)
         return if (this.text.isNullOrBlank()) {
             if (isErrorEnabled) this.showError("${this.hint} is required.")
             false
@@ -23,13 +24,13 @@ object InputUtils {
     /**
      * Shows the [error] message in an appropriate format.
      */
-    fun TextInputEditText.showError(error: String) {
+    fun TextInputEditText.showError(error: String?) {
         try {
             val wrapper = this.parent.parent as TextInputLayout
+            wrapper.isErrorEnabled = error != null
             wrapper.error = error
-            wrapper.isErrorEnabled = true
-        } catch (ex: Exception) {
-            Toast.makeText(this.context, error, Toast.LENGTH_SHORT).show()
+        } catch (ignored: Exception) {
+            error?.let { Toast.makeText(this.context, it, Toast.LENGTH_SHORT).show() }
         }
     }
 

@@ -24,6 +24,8 @@ class CygnusApp : Application() {
         const val EXTRA_USER = "user"
         const val EXTRA_ACCOUNT_TYPE = "account_type"
         const val EXTRA_REFERRAL_CODE = "referral_code"
+        const val EXTRA_INVITE_STATUS = "invite_status"
+        const val EXTRA_INVITES = "invites"
 
         // the PARAM_* strings are used to define parameters
         // used in dynamic links

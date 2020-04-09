@@ -1,12 +1,57 @@
 <resources>
   <string name="app_name">Cygnus School App</string>
-  <string name="drawer_open">Open drawer</string>
-  <string name="drawer_close">Close drawer</string>
-  <string name="next">Next</string>
 
-  <string-array name="schools">
-    <item>--Not Selected--</item>
-    <item>National University of Sciences &amp; Technology</item>
-    <item>Technische Universität Kaiserslautern</item>
-  </string-array>
+  <!-- Placeholders -->
+  <string name="ph_address">74 Bangur Avenue, Kolkata, West Bengal</string>
+  <string name="ph_date">2 January, 1961</string>
+  <string name="ph_email">bdeshmukh91@gmail.com</string>
+  <string name="ph_name">Brahman Deshmukh</string>
+  <string name="ph_phone">+9125742299</string>
+  <string name="ph_school">The Exemplary School</string>
+
+  <!-- Input Hints -->
+  <string name="hint_email">Email</string>
+  <string name="hint_password">Password</string>
+  <string name="hint_password_confirm">Confirm Password</string>
+
+  <!-- Button Labels -->
+  <string name="label_invite">Invite</string>
+  <string name="label_invite_multiple">Send Multiple Invites</string>
+  <string name="label_manage_classes">Class\nManagement</string>
+  <string name="label_manage_courses">Course\nManagement</string>
+  <string name="label_profile">Manage your Cygnus Profile</string>
+  <string name="label_revoke">Revoke</string>
+  <string name="label_staff_invited">%d Pending</string>
+  <string name="label_staff_joined">%d Joined</string>
+
+  <!-- Section Headings -->
+  <string name="staff_head">Staff</string>
+  <string name="staff_desc">Invite your team members to join Cygnus. A magic link will be emailed which
+    can be used to sign up.
+  </string>
+  <string name="academics_head">Academics</string>
+  <string name="academics_desc">Add/Edit the classes and courses taught at your school. You can also
+    assign class teachers, and select instructors for each subject.
+  </string>
+
+  <!-- Prompts and Explanations -->
+  <string name="sign_up_welcome_msg">%s <b>%s</b>,\n\n<b>%s</b> has invited you to join their %s on the Cygnus
+    App.\n\nPlease complete the registration process by verifying your email address and creating a password.
+  </string>
+
+  <!-- Status Messages -->
+  <string name="status_invitation_sending">Sending Invitation</string>
+  <string name="status_invitation_progress">A magic link is being emailed to %s…</string>
+  <string name="status_invitation_sent">Invitation emailed</string>
+
+  <string name="status_invitations_sending">Sending %d/%d Invitation…</string>
+  <string name="status_invitations_progress">Emailed %d/%d magic links…</string>
+  <string name="status_invitations_sent">Invitations Sent</string>
+
+  <string name="status_invite_pending">Pending</string>
+  <string name="status_invite_accepted">Accepted</string>
+
+  <!-- Error Messages -->
+  <string name="error_invitation_failure">Failed to invite</string>
+
 </resources>

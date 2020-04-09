@@ -6,8 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import co.aspirasoft.util.InputUtils.isNotBlank
-import com.cygnus.model.Credentials
-import com.cygnus.model.User
+import com.cygnus.model.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -113,7 +112,11 @@ class SignInActivity : AppCompatActivity() {
                 .getReference("$schoolId/users/${firebaseUser.uid}/")
                 .addListenerForSingleValueEvent(object : SignInEventListener() {
                     override fun onDataReceived(snapshot: DataSnapshot) {
-                        snapshot.getValue(User::class.java)?.let { user -> onSignedIn(user) }
+                        snapshot.getValue(when ((snapshot.value as HashMap<*, *>)["type"]) {
+                            Student::class.simpleName -> Student::class.java
+                            Teacher::class.simpleName -> Teacher::class.java
+                            else -> School::class.java
+                        })?.let { user -> onSignedIn(user) }
                     }
                 })
     }
@@ -126,12 +129,13 @@ class SignInActivity : AppCompatActivity() {
     private fun onSignedIn(user: User) {
         startActivity(Intent(
                 applicationContext,
-                when {
-                    user.type.equals("School", true) -> SchoolActivity::class.java
+                when (user) {
+                    is School -> SchoolActivity::class.java
                     else -> return // TODO: MainActivity::class.java
                 }
         ).apply { putExtra(CygnusApp.EXTRA_USER, user) })
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        finish()
     }
 
     /**
@@ -141,10 +145,9 @@ class SignInActivity : AppCompatActivity() {
      * @param account Firebase account of the school
      */
     private fun onSignedInAsSchool(name: String, account: FirebaseUser) {
-        onSignedIn(User(
+        onSignedIn(School(
                 account.uid,
                 name,
-                "School",
                 Credentials(account.email!!, "")
         ))
     }

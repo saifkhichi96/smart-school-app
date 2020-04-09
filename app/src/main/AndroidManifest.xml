@@ -31,6 +31,11 @@
 
     <activity android:name=".SchoolActivity"/>
 
+    <activity
+        android:name=".TeachersActivity"
+        android:label="Staff"
+        android:parentActivityName=".SchoolActivity"/>
+
   </application>
 
 </manifest>

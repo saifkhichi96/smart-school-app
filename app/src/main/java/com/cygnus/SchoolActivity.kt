@@ -1,8 +1,10 @@
 package com.cygnus
 
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -10,15 +12,19 @@ import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
 import co.aspirasoft.util.InputUtils.isNotBlank
 import co.aspirasoft.util.InputUtils.showError
+import com.cygnus.model.School
+import com.cygnus.model.Teacher
 import com.cygnus.model.User
 import com.cygnus.tasks.InvitationTask
 import com.cygnus.view.EmailsInputDialog
 import com.cygnus.view.LogoutConfirmationDialog
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ValueEventListener
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_school.*
 
 /**
@@ -32,6 +38,9 @@ import kotlinx.android.synthetic.main.activity_school.*
  */
 class SchoolActivity : SecureActivity() {
 
+    private val invitedStaff = ArrayList<Invite>()
+    private val joinedStaff = ArrayList<Invite>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_school)
@@ -39,8 +48,10 @@ class SchoolActivity : SecureActivity() {
         supportActionBar?.title = ""
 
         // set up click handlers
-        multipleInviteButton.setOnClickListener { onMultipleInvitesClicked() }
-        singleInviteButton.setOnClickListener { onSingleInviteClicked() }
+        inviteSingleButton.setOnClickListener { onInviteSingleClicked() }
+        inviteMultipleButton.setOnClickListener { onInviteMultipleClicked() }
+        invitedStaffButton.setOnClickListener { onInvitedStaffClicked() }
+        joinedStaffButton.setOnClickListener { onJoinedStaffClicked() }
     }
 
     override fun onStart() {
@@ -49,7 +60,7 @@ class SchoolActivity : SecureActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
+        menuInflater.inflate(R.menu.school_action_menu, menu)
         return true
     }
 
@@ -67,44 +78,13 @@ class SchoolActivity : SecureActivity() {
      * Displays the signed in school's details.
      */
     override fun updateUI(currentUser: User) {
-        if (currentUser.type == "School") {
+        if (currentUser is School) {
             schoolName.text = currentUser.name
             schoolEmail.text = currentUser.email
             schoolCode.setImageBitmap(QRGEncoder(currentUser.id, null, QRGContents.Type.TEXT, 512).bitmap)
+
+            showStaffStats(0, 0)
         } else finish()
-    }
-
-    /**
-     * Listens for changes in status of sent invites.
-     *
-     * Monitors all sent invites and displays the number of accepted
-     * and pending invites in realtime.
-     */
-    private fun trackSentInvites() {
-        CygnusApp.refToInvites(currentUser.id)
-                .addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        var pending = 0
-                        var accepted = 0
-                        val t = object : GenericTypeIndicator<HashMap<String, String>>() {}
-                        snapshot.getValue(t)?.let { invites ->
-                            for (invite in invites.values) {
-                                if (invite.endsWith("Pending")) {
-                                    pending += 1
-                                } else if (invite.endsWith("Accepted")) {
-                                    accepted += 1
-                                }
-                            }
-                        }
-
-                        pendingInvites.text = "$pending"
-                        acceptedInvites.text = "$accepted"
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-
-                    }
-                })
     }
 
     /**
@@ -114,20 +94,20 @@ class SchoolActivity : SecureActivity() {
      * for this address. A blocking progress box is displayed while the invite
      * is being sent.
      */
-    private fun onSingleInviteClicked() {
+    private fun onInviteSingleClicked() {
         if (emailField.isNotBlank()) {
             val email = emailField.text.toString().trim()
             val progressDialog = ProgressDialog.show(
                     this,
-                    "Sending Invitation",
-                    "A magic link is being emailed to $email...",
+                    getString(R.string.status_invitation_sending),
+                    String.format(getString(R.string.status_invitation_progress), email),
                     true
             )
 
             inviteSingleEmail(email, OnCompleteListener {
                 progressDialog.dismiss()
                 if (!it.isSuccessful) {
-                    emailField.showError(it.exception?.message ?: "Failed to invite.")
+                    emailField.showError(it.exception?.message ?: getString(R.string.error_invitation_failure))
                 }
             })
         }
@@ -143,7 +123,7 @@ class SchoolActivity : SecureActivity() {
      * A blocking progress box is displayed while the invites are being
      * sent. Status of each sent invite is displayed.
      */
-    private fun onMultipleInvitesClicked() {
+    private fun onInviteMultipleClicked() {
         EmailsInputDialog(this)
                 .setOnEmailsReceivedListener { emails ->
                     inviteMultipleEmails(emails)
@@ -152,18 +132,54 @@ class SchoolActivity : SecureActivity() {
     }
 
     /**
+     * Handles clicks on invited staff button.
+     *
+     * Opens the [TeachersActivity] with a list of staff members who have pending
+     * invitations.
+     */
+    private fun onInvitedStaffClicked() {
+        if (invitedStaff.size > 0) {
+            val i = Intent(this, TeachersActivity::class.java)
+            i.putExtra(CygnusApp.EXTRA_USER, currentUser)
+            i.putExtra(CygnusApp.EXTRA_INVITE_STATUS, getString(R.string.status_invite_pending))
+            i.putExtra(CygnusApp.EXTRA_INVITES, invitedStaff)
+            startActivity(i)
+        } else {
+            Snackbar.make(joinedStaffButton, "No staff members invited yet.", Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    /**
+     * Handles clicks on joined staff button.
+     *
+     * Opens the [TeachersActivity] with a list of staff members who have accepted
+     * their invitations and joined the app.
+     */
+    private fun onJoinedStaffClicked() {
+        if (joinedStaff.size > 0) {
+            val i = Intent(this, TeachersActivity::class.java)
+            i.putExtra(CygnusApp.EXTRA_USER, currentUser)
+            i.putExtra(CygnusApp.EXTRA_INVITE_STATUS, getString(R.string.status_invite_accepted))
+            i.putExtra(CygnusApp.EXTRA_INVITES, joinedStaff)
+            startActivity(i)
+        } else {
+            Snackbar.make(joinedStaffButton, "No staff members have joined yet.", Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    /**
      * Sends a link to [email] which can be used to create a Teacher account.
      *
      * @param listener Optional callback to listen for completion of invitation task.
      */
     private fun inviteSingleEmail(email: String, listener: OnCompleteListener<Void?>? = null) {
-        InvitationTask(email, "Teacher", currentUser.id)
+        InvitationTask(this, Teacher::class.simpleName!!, currentUser.id, email)
                 .start { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(this@SchoolActivity, "Email sent.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@SchoolActivity, getString(R.string.status_invitation_sent), Toast.LENGTH_LONG).show()
                         emailField.setText("")
                     } else {
-                        emailField.showError(task.exception?.message ?: "Email could not be sent.")
+                        emailField.showError("Email ${task.exception?.message ?: "could not be sent"}.")
                     }
 
                     listener?.let { task.addOnCompleteListener(it) }
@@ -179,15 +195,15 @@ class SchoolActivity : SecureActivity() {
 
         val progressDialog = ProgressDialog.show(
                 this,
-                "Sending $invited/$invitees Invitation...",
-                "Emailed $invited/$invitees magic links...",
+                String.format(getString(R.string.status_invitations_sending), invited, invitees),
+                String.format(getString(R.string.status_invitations_progress), invited, invitees),
                 true
         )
 
         var status = ""
         for (email in emails) {
             inviteSingleEmail(email, OnCompleteListener {
-                progressDialog.setTitle("Sending $invited/$invitees Invitation...")
+                progressDialog.setTitle(String.format(getString(R.string.status_invitations_sending), invited, invitees))
 
                 synchronized(status) {
                     status += if (it.isSuccessful) {
@@ -202,11 +218,89 @@ class SchoolActivity : SecureActivity() {
 
                 invited += 1
                 if (invited > invitees) {
-                    progressDialog.setTitle("Invitations Sent")
+                    progressDialog.setTitle(getString(R.string.status_invitations_sent))
                     progressDialog.setCancelable(true)
                     Handler().postDelayed({ progressDialog.dismiss() }, 5000L)
                 }
             })
+        }
+    }
+
+    /**
+     * Displays number of invited and joined staff members.
+     */
+    private fun showStaffStats(invited: Int, joined: Int) {
+        invitedStaffButton.text = String.format(getString(R.string.label_staff_invited), invited)
+        joinedStaffButton.text = String.format(getString(R.string.label_staff_joined), joined)
+    }
+
+    /**
+     * Listens for changes in status of sent invites.
+     *
+     * Monitors all sent invites and displays the number of accepted
+     * and pending invites in realtime.
+     */
+    private fun trackSentInvites() {
+        CygnusApp.refToInvites(currentUser.id)
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val t = object : GenericTypeIndicator<HashMap<String, String>>() {}
+                        snapshot.getValue(t)?.let { invites ->
+                            val invitedStaff = ArrayList<Invite>()
+                            val joinedStaff = ArrayList<Invite>()
+                            invites.forEach {
+                                val invite = Invite(
+                                        it.key,
+                                        it.value.split(":")[0],
+                                        it.value.split(":")[1]
+                                )
+
+                                when (invite.status) {
+                                    getString(R.string.status_invite_pending) -> invitedStaff.add(invite)
+                                    getString(R.string.status_invite_accepted) -> joinedStaff.add(invite)
+                                }
+                            }
+
+                            this@SchoolActivity.invitedStaff.apply {
+                                clear()
+                                addAll(invitedStaff)
+                            }
+
+                            this@SchoolActivity.joinedStaff.apply {
+                                clear()
+                                addAll(joinedStaff)
+                            }
+                        }
+
+                        showStaffStats(invitedStaff.size, joinedStaff.size)
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+                })
+    }
+
+    private var doubleBackToExitPressedOnce = false
+    override fun onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed()
+            return
+        }
+
+        this.doubleBackToExitPressedOnce = true
+        Toast.makeText(this, "Press back button twice to exit.", Toast.LENGTH_SHORT).show()
+        Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 2000)
+    }
+
+    @Parcelize
+    data class Invite(val id: String, val invitee: String, val status: String) : Parcelable {
+        override fun equals(other: Any?): Boolean {
+            return if (other is Invite?) other?.id == this.id else super.equals(other)
+        }
+
+        override fun hashCode(): Int {
+            return id.hashCode()
         }
     }
 

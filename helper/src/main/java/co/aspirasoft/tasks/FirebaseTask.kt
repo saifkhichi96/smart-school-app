@@ -67,7 +67,7 @@ abstract class FirebaseTask : ValueEventListener {
      */
     fun start(onTaskCompleteListener: (Task<Void?>) -> Unit) {
         this.onTaskCompleteListener = onTaskCompleteListener
-        init()?.addListenerForSingleValueEvent(this) ?: onQuerySuccess()
+        init()?.addListenerForSingleValueEvent(this) ?: onTaskCompleteListener(onQuerySuccess())
     }
 
 }

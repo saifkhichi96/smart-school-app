@@ -1,8 +1,10 @@
 package com.cygnus.tasks
 
+import android.content.Context
 import co.aspirasoft.tasks.DummyTask
 import co.aspirasoft.tasks.FirebaseTask
 import com.cygnus.CygnusApp
+import com.cygnus.R
 import com.cygnus.utils.DynamicLinksUtils
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -19,9 +21,10 @@ import com.google.firebase.database.Query
  * @param referral Unique referral code for generating invitation.
  */
 class InvitationTask(
-        private val inviteeEmail: String,
+        val context: Context,
         private val inviteeType: String,
-        private val referral: String
+        private val referral: String,
+        private val inviteeEmail: String
 ) : FirebaseTask() {
 
     /**
@@ -34,7 +37,7 @@ class InvitationTask(
      *
      * All new invitations are in `Pending` state.
      */
-    private val state = "Pending"
+    private val state = context.getString(R.string.status_invite_pending)
 
     /**
      * Checks if the invitee has previously been invited.
@@ -65,11 +68,13 @@ class InvitationTask(
      * Generates and sends an invitation.
      */
     override fun onQuerySuccess(): Task<Void?> {
-        return FirebaseAuth.getInstance()
+        FirebaseAuth.getInstance()
                 .sendSignInLinkToEmail(inviteeEmail, DynamicLinksUtils.createSignUpAction(inviteeType, referral))
                 .addOnSuccessListener {
                     invitesRef.push().setValue("$inviteeEmail:$state")
                 }
+
+        return DummyTask(null)
     }
 
     /**
@@ -88,7 +93,7 @@ class InvitationTask(
      * Return `true` if conditions satisfied or no initial query.
      */
     override fun checkCriteria(snapshot: DataSnapshot): Boolean {
-        return checkAlreadyInvited(snapshot)
+        return !checkAlreadyInvited(snapshot)
     }
 
 }

@@ -1,6 +1,7 @@
 package co.aspirasoft.tasks
 
 import android.app.Activity
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
@@ -59,8 +60,13 @@ class DummyTask(private val error: Exception?) : Task<Void?>() {
         return addOnSuccessListener(listener)
     }
 
+    override fun addOnCompleteListener(listener: OnCompleteListener<Void?>): Task<Void?> {
+        listener.onComplete(this)
+        return this
+    }
+
     override fun isSuccessful(): Boolean {
-        return error != null
+        return error == null
     }
 
     override fun isCanceled(): Boolean {
