@@ -1,10 +1,10 @@
 package com.cygnus.sign_up
 
 import android.os.Bundle
+import android.util.Log
 import android.util.SparseArray
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import co.aspirasoft.view.WizardViewStep
 import com.cygnus.CygnusApp
 import com.cygnus.R
 import com.cygnus.model.Credentials
@@ -35,16 +35,13 @@ import kotlin.reflect.KClass
  */
 class SignUpActivity : AppCompatActivity() {
 
-    private val steps: List<WizardViewStep> = listOf(
-            CreateAccountStep(),
-            IntroductionStep(),
-            ContactInfoStep(),
-            PersonalInfoStep()
-    )
-
-    lateinit var referralCode: String
+    private lateinit var emailLink: String
+    private lateinit var referralCode: String
     lateinit var accountType: KClass<out User>
-    lateinit var emailLink: String
+    private var classId: String? = null
+    private var rollNo: String? = null
+
+    private val isStudentSignUp get() = classId != null && rollNo != null
 
     /**
      * Overrides the onCreate activity lifecycle method.
@@ -55,16 +52,14 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
-
-        wizardView.setupWithWizardSteps(supportFragmentManager, steps)
-        wizardView.setOnSubmitListener {
-            onSubmit(it)
-        }
+        Log.i("Cygnus", "Inside SignUpActivity.onCreate()...")
 
         // Read sign up parameters from intent
-        referralCode = intent.getStringExtra(CygnusApp.EXTRA_REFERRAL_CODE) ?: ""
-        val accountType = User.valueOf(intent.getStringExtra(CygnusApp.EXTRA_ACCOUNT_TYPE))
         emailLink = intent.data.toString()
+        referralCode = intent.getStringExtra(CygnusApp.EXTRA_REFERRAL_CODE) ?: ""
+        classId = intent.getStringExtra(CygnusApp.EXTRA_STUDENT_CLASS_ID)
+        rollNo = intent.getStringExtra(CygnusApp.EXTRA_STUDENT_ROLL_NO)
+        val accountType = User.valueOf(intent.getStringExtra(CygnusApp.EXTRA_ACCOUNT_TYPE))
 
         // Sign up cannot proceed if no referral code or account type provided
         if (referralCode.isBlank() || accountType == null) {
@@ -72,48 +67,65 @@ class SignUpActivity : AppCompatActivity() {
             return
         }
         this.accountType = accountType
+        Log.i("Cygnus", "Class: $classId")
+        Log.i("Cygnus", "Roll # $rollNo")
+        if (accountType == Student::class && (rollNo.isNullOrBlank() || classId.isNullOrBlank())) {
+            finish()
+            return
+        }
 
         // Referral code must be still valid
         verifyReferralCode()
 
+        // Set up views
+        wizardView.setupWithWizardSteps(supportFragmentManager, when {
+            this.isStudentSignUp -> listOf(
+                    CreateAccountStep(),
+                    IntroductionStep(),
+                    ContactInfoStep(),
+                    PersonalInfoStep()
+            )
+            else -> listOf(
+                    CreateAccountStep(),
+                    IntroductionStep(),
+                    ContactInfoStep()
+            )
+        })
+        wizardView.setOnSubmitListener {
+            onSubmit(it)
+        }
     }
 
     private fun onSubmit(data: SparseArray<Any>) {
         val name = data[R.id.nameField].toString()
         val address = data[R.id.streetField].toString()
         val phone = data[R.id.phoneField].toString()
-        val classId = "" // todo: data[R.id.classIdField].toString()
+        val classId = classId ?: ""
 
         val email = data[R.id.emailField].toString()
         val password = data[R.id.passwordField].toString()
 
-        val rollNo = "" // todo: data[R.id.rollNoField].toString()
+        val rollNo = rollNo ?: ""
         val dateOfBirth = data[R.id.dateOfBirthField].toString()
         val fatherName = data[R.id.fatherNameField].toString()
         val motherName = data[R.id.motherNameField].toString()
 
-        when (accountType) {
-            Student::class -> Student()
-            Teacher::class -> Teacher()
-            else -> null
-        }?.let {
+        when {
+            isStudentSignUp -> Student().apply {
+                this.classId = classId
+                this.rollNo = rollNo
+                this.dateOfBirth = dateOfBirth
+                this.fatherName = fatherName
+                this.motherName = motherName
+            }
+            else -> Teacher().apply {
+                this.classId = classId
+            }
+        }.also {
             it.name = name
             it.credentials = Credentials(email, password)
             it.address = address
             it.phone = phone
-
-            when (it) {
-                is Student -> {
-                    it.classId = classId
-                    it.rollNo = rollNo
-                    it.dateOfBirth = dateOfBirth
-                    it.fatherName = fatherName
-                    it.motherName = motherName
-                }
-                is Teacher -> {
-                    it.classId = classId
-                }
-            }
 
             onUserCreated(it)
         }

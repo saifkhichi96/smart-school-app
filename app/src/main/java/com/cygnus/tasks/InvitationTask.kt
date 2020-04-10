@@ -17,14 +17,14 @@ import com.google.firebase.database.Query
  * Purpose of this task is to asynchronously send a sign up invite
  * to [inviteeEmail] by generating a magic link.
  *
- * @param inviteeType Type of the invited user (teacher, student, etc).
  * @param referral Unique referral code for generating invitation.
  */
 class InvitationTask(
         val context: Context,
-        private val inviteeType: String,
         private val referral: String,
-        private val inviteeEmail: String
+        private val inviteeEmail: String,
+        private val classId: String? = null,
+        private val rollNo: String? = null
 ) : FirebaseTask() {
 
     /**
@@ -38,6 +38,8 @@ class InvitationTask(
      * All new invitations are in `Pending` state.
      */
     private val state = context.getString(R.string.status_invite_pending)
+
+    private val isTeacherInvite: Boolean get() = rollNo == null || classId == null
 
     /**
      * Checks if the invitee has previously been invited.
@@ -61,7 +63,11 @@ class InvitationTask(
      * Requests list of existing users.
      */
     override fun init(): Query {
-        return invitesRef.orderByValue()
+        return if (this.isTeacherInvite) {
+            invitesRef.orderByValue()
+        } else {
+            return invitesRef.child("classes/$classId/invites/")
+        }
     }
 
     /**
@@ -69,9 +75,15 @@ class InvitationTask(
      */
     override fun onQuerySuccess(): Task<Void?> {
         FirebaseAuth.getInstance()
-                .sendSignInLinkToEmail(inviteeEmail, DynamicLinksUtils.createSignUpAction(inviteeType, referral))
-                .addOnSuccessListener {
-                    invitesRef.push().setValue("$inviteeEmail:$state")
+                .sendSignInLinkToEmail(inviteeEmail, when {
+                    isTeacherInvite -> DynamicLinksUtils.createSignUpActionForTeacher(referral)
+                    else -> DynamicLinksUtils.createSignUpActionForStudent(referral, rollNo!!, classId!!)
+                }).addOnSuccessListener {
+                    val ref = when {
+                        isTeacherInvite -> invitesRef
+                        else -> invitesRef.child("classes/$classId/invites/")
+                    }
+                    ref.push().setValue("$inviteeEmail:$state")
                 }
 
         return DummyTask(null)

@@ -37,7 +37,7 @@ class EmailsInputDialog(context: Context) : Dialog(context) {
     }
 
     private fun onOk() {
-        if (emailsField.isNotBlank()) {
+        if (emailsField.isNotBlank(true)) {
             val emails = emailsField.text.toEmailsList()
             onEmailsReceived?.let { it(emails) }
 

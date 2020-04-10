@@ -13,7 +13,6 @@ import androidmads.library.qrgenearator.QRGEncoder
 import co.aspirasoft.util.InputUtils.isNotBlank
 import co.aspirasoft.util.InputUtils.showError
 import com.cygnus.model.School
-import com.cygnus.model.Teacher
 import com.cygnus.model.User
 import com.cygnus.tasks.InvitationTask
 import com.cygnus.view.EmailsInputDialog
@@ -173,7 +172,7 @@ class SchoolActivity : SecureActivity() {
      * @param listener Optional callback to listen for completion of invitation task.
      */
     private fun inviteSingleEmail(email: String, listener: OnCompleteListener<Void?>? = null) {
-        InvitationTask(this, Teacher::class.simpleName!!, currentUser.id, email)
+        InvitationTask(this, currentUser.id, email)
                 .start { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(this@SchoolActivity, getString(R.string.status_invitation_sent), Toast.LENGTH_LONG).show()
