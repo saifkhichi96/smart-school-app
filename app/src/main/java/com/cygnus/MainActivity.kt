@@ -1,10 +1,13 @@
 package com.cygnus
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.model.*
 import com.cygnus.view.AccountSwitcher
@@ -66,11 +69,13 @@ class MainActivity : SecureActivity() {
     override fun updateUI(currentUser: User) {
         if (currentUser !is School) {
             attendanceButton.setOnClickListener {
-                // TODO: Open attendance activity
+                startActivity(Intent(this, AttendanceActivity::class.java))
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             }
 
             classAnnouncementsButton.setOnClickListener {
-                // TODO: Open announcements activity
+                startActivity(Intent(this, NoticeActivity::class.java))
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             }
 
             when (currentUser) {
@@ -90,11 +95,26 @@ class MainActivity : SecureActivity() {
 
                     manageStudentsButton.visibility = View.VISIBLE
                     manageStudentsButton.setOnClickListener {
-                        // TODO: Open an activity where class students can be added/edited
+                        startActivity(Intent(this, StudentsActivity::class.java).apply {
+                            putExtra(CygnusApp.EXTRA_USER, currentUser)
+                        })
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                     }
                 }
             }
         } else finish()
+    }
+
+    private var doubleBackToExitPressedOnce = false
+    override fun onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed()
+            return
+        }
+
+        this.doubleBackToExitPressedOnce = true
+        Toast.makeText(this, "Press back button twice to exit.", Toast.LENGTH_SHORT).show()
+        Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 2000)
     }
 
     class SubjectAdapter(context: Context, private val subjects: List<Subject>)
