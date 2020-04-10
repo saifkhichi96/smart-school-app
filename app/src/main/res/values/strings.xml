@@ -10,9 +10,20 @@
   <string name="ph_school">The Exemplary School</string>
 
   <!-- Input Hints -->
+  <string name="hint_blood_group">Blood Group</string>
+  <string name="hint_city">City</string>
+  <string name="hint_country">Country</string>
+  <string name="hint_dob">Date of Birth</string>
   <string name="hint_email">Email</string>
+  <string name="hint_father">Father\'s name</string>
+  <string name="hint_mother">Mother\'s name</string>
+  <string name="hint_name">Name</string>
   <string name="hint_password">Password</string>
   <string name="hint_password_confirm">Confirm Password</string>
+  <string name="hint_phone">Phone</string>
+  <string name="hint_postal_code">Postal Code</string>
+  <string name="hint_state">State</string>
+  <string name="hint_street">Street</string>
 
   <!-- Button Labels -->
   <string name="label_invite">Invite</string>
@@ -23,6 +34,9 @@
   <string name="label_revoke">Revoke</string>
   <string name="label_staff_invited">%d Pending</string>
   <string name="label_staff_joined">%d Joined</string>
+  <string name="label_female">Female</string>
+  <string name="label_male">Male</string>
+  <string name="label_non_binary">Other</string>
 
   <!-- Section Headings -->
   <string name="staff_head">Staff</string>
@@ -35,9 +49,10 @@
   </string>
 
   <!-- Prompts and Explanations -->
-  <string name="sign_up_welcome_msg">%s <b>%s</b>,\n\n<b>%s</b> has invited you to join their %s on the Cygnus
-    App.\n\nPlease complete the registration process by verifying your email address and creating a password.
+  <string name="sign_up_welcome_msg">%s %s,\n\nYou have been invited by your %s to join the Cygnus App.
+    \n\nPlease complete the registration process by creating a password for your new account.
   </string>
+  <string name="prompt_cancel_signup">Your account has not been created yet. Do you want to exit sign up?</string>
 
   <!-- Status Messages -->
   <string name="status_invitation_sending">Sending Invitation</string>
@@ -53,5 +68,10 @@
 
   <!-- Error Messages -->
   <string name="error_invitation_failure">Failed to invite</string>
+  <string name="sign_up_email_explanation">To verify your identity, you must use the same email address to sign up on
+    which you received this invitation.
+  </string>
+  <string name="error_password_mismatch">Passwords do not match.</string>
+  <string name="error_email_invalid">Invalid email address.</string>
 
 </resources>

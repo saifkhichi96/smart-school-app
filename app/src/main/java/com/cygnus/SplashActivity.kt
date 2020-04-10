@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.cygnus.sign_up.SignUpActivity
 import com.cygnus.utils.DynamicLinksUtils
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
@@ -82,6 +83,7 @@ class SplashActivity : AppCompatActivity() {
                 i.data = deepLink
 
                 startActivity(i)
+                finish()
             }
         }
     }

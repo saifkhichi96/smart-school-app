@@ -27,7 +27,7 @@
           android:layout_height="64dp"
           android:layout_margin="8dp"
           android:scaleType="centerInside"
-          android:tint="?attr/colorPrimary"/>
+          android:tint="@android:color/white"/>
 
       <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/wizardTitle"
@@ -35,7 +35,8 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginBottom="16dp"
-          android:textColor="?attr/colorPrimary"/>
+          android:textColor="@android:color/white"
+          android:textStyle="bold"/>
 
     </LinearLayout>
 

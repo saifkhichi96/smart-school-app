@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.cygnus">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.cygnus"
+          tools:ignore="LockedOrientationActivity">
 
   <application
       android:name=".CygnusApp"
@@ -10,7 +12,8 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:theme="@style/AppTheme">
 
-    <activity android:name=".SplashActivity">
+    <activity android:name=".SplashActivity"
+              android:screenOrientation="sensorPortrait">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
@@ -25,16 +28,20 @@
       </intent-filter>
     </activity>
 
-    <activity android:name=".SignInActivity"/>
+    <activity android:name=".SignInActivity"
+              android:screenOrientation="sensorPortrait"/>
 
-    <activity android:name=".SignUpActivity"/>
+    <activity android:name=".sign_up.SignUpActivity"
+              android:screenOrientation="sensorPortrait"/>
 
-    <activity android:name=".SchoolActivity"/>
+    <activity android:name=".SchoolActivity"
+              android:screenOrientation="sensorPortrait"/>
 
     <activity
         android:name=".TeachersActivity"
         android:label="Staff"
-        android:parentActivityName=".SchoolActivity"/>
+        android:parentActivityName=".SchoolActivity"
+        android:screenOrientation="sensorPortrait"/>
 
   </application>
 
