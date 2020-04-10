@@ -37,6 +37,24 @@
     <activity android:name=".MainActivity"
               android:screenOrientation="sensorPortrait"/>
 
+    <activity
+        android:name=".StudentsActivity"
+        android:label="Manage Students"
+        android:parentActivityName=".MainActivity"
+        android:screenOrientation="sensorPortrait"/>
+
+    <activity
+        android:name=".NoticeActivity"
+        android:label="Announcements"
+        android:parentActivityName=".MainActivity"
+        android:screenOrientation="sensorPortrait"/>
+
+    <activity
+        android:name=".AttendanceActivity"
+        android:label="Attendance"
+        android:parentActivityName=".MainActivity"
+        android:screenOrientation="sensorPortrait"/>
+
     <activity android:name=".SchoolActivity"
               android:screenOrientation="sensorPortrait"/>
 
