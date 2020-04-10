@@ -131,7 +131,7 @@ class SignInActivity : AppCompatActivity() {
                 applicationContext,
                 when (user) {
                     is School -> SchoolActivity::class.java
-                    else -> return // TODO: MainActivity::class.java
+                    else -> MainActivity::class.java
                 }
         ).apply { putExtra(CygnusApp.EXTRA_USER, user) })
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)

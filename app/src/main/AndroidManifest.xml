@@ -34,6 +34,9 @@
     <activity android:name=".sign_up.SignUpActivity"
               android:screenOrientation="sensorPortrait"/>
 
+    <activity android:name=".MainActivity"
+              android:screenOrientation="sensorPortrait"/>
+
     <activity android:name=".SchoolActivity"
               android:screenOrientation="sensorPortrait"/>
 

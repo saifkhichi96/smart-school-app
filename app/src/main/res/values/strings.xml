@@ -79,4 +79,12 @@
   <string name="error_password_mismatch">Passwords do not match.</string>
   <string name="error_email_invalid">Invalid email address.</string>
 
+  <!-- Menu Actions -->
+  <string name="menu_dashboard">Dashboard</string>
+  <string name="menu_timetable">Timetable</string>
+  <string name="menu_homework">Homework</string>
+  <string name="menu_notice_board">Notice Board</string>
+  <string name="menu_account">Account</string>
+  <string name="menu_sign_out">Sign Out</string>
+
 </resources>

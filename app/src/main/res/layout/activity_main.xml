@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+  <!-- Fixed top action bar -->
+  <com.google.android.material.appbar.AppBarLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@android:color/transparent"
+      app:elevation="0dp">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"/>
+
+  </com.google.android.material.appbar.AppBarLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical"
+      android:paddingStart="@dimen/activity_horizontal_margin"
+      android:paddingEnd="@dimen/activity_horizontal_margin"
+      app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        app:cardBackgroundColor="?colorAccent"
+        app:cardElevation="4dp">
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="@drawable/gradient_accent"
+          android:padding="16dp"
+          android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="top"
+            android:orientation="horizontal">
+
+          <LinearLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/headline"
+                style="@style/TextAppearance.MaterialComponents.Overline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your are assigned to"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/className"
+                style="@style/TextAppearance.MaterialComponents.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="Grade 10"/>
+
+          </LinearLayout>
+
+          <com.google.android.material.button.MaterialButton
+              android:id="@+id/studentCount"
+              style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+              android:layout_width="match_parent"
+              android:layout_height="32dp"
+              android:enabled="false"
+              android:gravity="end|center_vertical"
+              android:padding="0dp"
+              android:text="0"
+              android:textColor="@android:color/primary_text_light"
+              android:visibility="gone"
+              app:icon="@drawable/ic_classroom"
+              app:iconGravity="end"
+              app:iconPadding="4dp"
+              app:iconSize="24dp"
+              app:iconTint="@android:color/primary_text_light"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/manageStudentsButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:padding="0dp"
+            android:text="Manage Your Students"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            app:icon="@drawable/ic_students"
+            app:iconSize="24dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/attendanceButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:padding="0dp"
+            android:text="Mark Attendance"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_attendance"
+            app:iconSize="24dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/classAnnouncementsButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:padding="0dp"
+            android:text="Announcements"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_announcements"
+            app:iconSize="24dp"/>
+
+      </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/TextAppearance.MaterialComponents.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textStyle="bold"
+        android:text="Your Courses"/>
+
+    <GridView
+        android:id="@+id/coursesList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="2"/>
+
+  </LinearLayout>
+
+  <com.google.android.material.bottomnavigation.BottomNavigationView
+      android:id="@+id/bottom_navigation"
+      android:layout_width="match_parent"
+      android:layout_height="?actionBarSize"
+      android:layout_gravity="bottom"
+      android:background="@color/colorPrimary"
+      app:itemIconTint="@android:color/primary_text_dark"
+      app:itemTextColor="@android:color/primary_text_dark"
+      app:menu="@menu/bottom_navigation_menu"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
