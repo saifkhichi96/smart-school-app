@@ -11,7 +11,7 @@ import com.cygnus.model.User
 import com.cygnus.view.AddClassDialog
 import com.cygnus.view.SchoolClassView
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.activity_school_classes.*
+import kotlinx.android.synthetic.main.activity_list.*
 
 class SchoolClassesActivity : SecureActivity() {
 
@@ -22,7 +22,7 @@ class SchoolClassesActivity : SecureActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_school_classes)
+        setContentView(R.layout.activity_list)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -35,7 +35,9 @@ class SchoolClassesActivity : SecureActivity() {
         invites.forEach { this.teachers.add(it.invitee) }
 
         adapter = SchoolClassAdapter(this, classes)
-        classesList.adapter = adapter
+        contentList.adapter = adapter
+
+        addButton.setOnClickListener { onAddClassClicked() }
     }
 
     override fun updateUI(currentUser: User) {
@@ -72,7 +74,7 @@ class SchoolClassesActivity : SecureActivity() {
         }
     }
 
-    fun onAddClassClicked(view: View) {
+    private fun onAddClassClicked() {
         AddClassDialog.newInstance(teachers, currentUser.id).show(
                 supportFragmentManager,
                 "add_class_dialog"

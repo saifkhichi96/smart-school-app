@@ -19,19 +19,17 @@
   </com.google.android.material.appbar.AppBarLayout>
 
   <ListView
-      android:id="@+id/classesList"
+      android:id="@+id/contentList"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
 
-
   <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-      android:id="@+id/addClassButton"
+      android:id="@+id/addButton"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="bottom|end"
       android:layout_margin="@dimen/activity_horizontal_margin"
-      android:onClick="onAddClassClicked"
       app:backgroundTint="?attr/colorPrimary"
       app:icon="@drawable/ic_action_add"
       app:iconTint="?android:attr/textColorPrimary"/>

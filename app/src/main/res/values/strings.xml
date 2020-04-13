@@ -29,6 +29,9 @@
   <string name="hint_street">Street</string>
   <string name="hint_student_email">Student Email</string>
   <string name="hint_student_roll_no">Roll Number</string>
+  <string name="hint_subject_class">Class/Section</string>
+  <string name="hint_subject_name">Course Name</string>
+  <string name="hint_subject_teacher">Teacher\'s Email</string>
 
   <!-- Button Labels -->
   <string name="label_add">Add</string>
@@ -39,7 +42,7 @@
   <string name="label_manage_courses">Course\nManagement</string>
   <string name="label_profile">Manage your Cygnus Profile</string>
   <string name="label_revoke">Revoke</string>
-  <string name="label_skip_teacher_assignment">Assign a teacher to this class later.</string>
+  <string name="label_skip_teacher_assignment">Assign a teacher later.</string>
   <string name="label_staff_invited">%d Pending</string>
   <string name="label_staff_joined">%d Joined</string>
   <string name="label_female">Female</string>
@@ -58,6 +61,10 @@
   <string name="add_class_head">Add Class</string>
   <string name="add_class_desc">Enter details of the new class to add it to your school. Please note that each
     school class must have a unique name.
+  </string>
+  <string name="add_subject_head">Add Subject</string>
+  <string name="add_subject_desc">Enter details of the new subject to add it to your school. Please note that each
+    subject taught to a class must have a unique name.
   </string>
 
   <!-- Prompts and Explanations -->

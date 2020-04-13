@@ -49,4 +49,23 @@ class Subject(name: String, teacherId: String, classId: String) : BaseModel() {
         setChanged()
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Subject
+
+        if (name != other.name) return false
+        if (classId != other.classId) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + classId.hashCode()
+        return result
+    }
+
+
 }

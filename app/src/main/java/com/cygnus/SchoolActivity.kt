@@ -89,7 +89,10 @@ class SchoolActivity : SecureActivity() {
     }
 
     fun onManageSubjectsClicked(v: View) {
-        // TODO: Open subject management activity
+        startActivity(Intent(this, SchoolSubjectsActivity::class.java).apply {
+            putExtra(CygnusApp.EXTRA_USER, currentUser)
+            putExtra(CygnusApp.EXTRA_INVITES, joinedStaff)
+        })
     }
 
     /**
