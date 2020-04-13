@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
@@ -45,12 +46,6 @@ class SchoolActivity : SecureActivity() {
         setContentView(R.layout.activity_school)
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
-
-        // set up click handlers
-        inviteSingleButton.setOnClickListener { onInviteSingleClicked() }
-        inviteMultipleButton.setOnClickListener { onInviteMultipleClicked() }
-        invitedStaffButton.setOnClickListener { onInvitedStaffClicked() }
-        joinedStaffButton.setOnClickListener { onJoinedStaffClicked() }
     }
 
     override fun onStart() {
@@ -86,6 +81,17 @@ class SchoolActivity : SecureActivity() {
         } else finish()
     }
 
+    fun onManageClassesClicked(v: View) {
+        startActivity(Intent(this, SchoolClassesActivity::class.java).apply {
+            putExtra(CygnusApp.EXTRA_USER, currentUser)
+            putExtra(CygnusApp.EXTRA_INVITES, joinedStaff)
+        })
+    }
+
+    fun onManageSubjectsClicked(v: View) {
+        // TODO: Open subject management activity
+    }
+
     /**
      * Handles clicks on single invite button.
      *
@@ -93,7 +99,7 @@ class SchoolActivity : SecureActivity() {
      * for this address. A blocking progress box is displayed while the invite
      * is being sent.
      */
-    private fun onInviteSingleClicked() {
+    fun onInviteSingleClicked(v: View) {
         if (emailField.isNotBlank()) {
             val email = emailField.text.toString().trim()
             val progressDialog = ProgressDialog.show(
@@ -122,7 +128,7 @@ class SchoolActivity : SecureActivity() {
      * A blocking progress box is displayed while the invites are being
      * sent. Status of each sent invite is displayed.
      */
-    private fun onInviteMultipleClicked() {
+    fun onInviteMultipleClicked(v: View) {
         EmailsInputDialog(this)
                 .setOnEmailsReceivedListener { emails ->
                     inviteMultipleEmails(emails)
@@ -136,7 +142,7 @@ class SchoolActivity : SecureActivity() {
      * Opens the [TeachersActivity] with a list of staff members who have pending
      * invitations.
      */
-    private fun onInvitedStaffClicked() {
+    fun onInvitedStaffClicked(v: View) {
         if (invitedStaff.size > 0) {
             val i = Intent(this, TeachersActivity::class.java)
             i.putExtra(CygnusApp.EXTRA_USER, currentUser)
@@ -154,7 +160,7 @@ class SchoolActivity : SecureActivity() {
      * Opens the [TeachersActivity] with a list of staff members who have accepted
      * their invitations and joined the app.
      */
-    private fun onJoinedStaffClicked() {
+    fun onJoinedStaffClicked(v: View) {
         if (joinedStaff.size > 0) {
             val i = Intent(this, TeachersActivity::class.java)
             i.putExtra(CygnusApp.EXTRA_USER, currentUser)
@@ -289,7 +295,7 @@ class SchoolActivity : SecureActivity() {
 
         this.doubleBackToExitPressedOnce = true
         Toast.makeText(this, "Press back button twice to exit.", Toast.LENGTH_SHORT).show()
-        Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 2000)
+        Handler().postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
     }
 
     @Parcelize

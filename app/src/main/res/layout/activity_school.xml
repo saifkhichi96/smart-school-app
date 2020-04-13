@@ -101,6 +101,7 @@
               android:layout_height="wrap_content"
               android:alpha="0.75"
               android:gravity="center"
+              android:onClick="onJoinedStaffClicked"
               android:text="@string/label_staff_joined"
               android:textAllCaps="false"
               app:icon="@drawable/ic_team"
@@ -115,6 +116,7 @@
               android:layout_height="wrap_content"
               android:alpha="0.75"
               android:gravity="center"
+              android:onClick="onInvitedStaffClicked"
               android:text="@string/label_staff_invited"
               android:textAllCaps="false"
               app:iconGravity="textStart"
@@ -159,6 +161,7 @@
               android:layout_height="wrap_content"
               android:layout_marginStart="8dp"
               android:layout_marginLeft="8dp"
+              android:onClick="onInviteSingleClicked"
               android:text="@string/label_invite"/>
 
         </LinearLayout>
@@ -168,6 +171,7 @@
             android:id="@+id/inviteMultipleButton"
             android:layout_width="wrap_content"
             android:layout_height="42dp"
+            android:onClick="onInviteMultipleClicked"
             android:text="@string/label_invite_multiple"/>
 
       </LinearLayout>
@@ -216,6 +220,7 @@
               android:id="@+id/manageClassesButton"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:onClick="onManageClassesClicked"
               android:text="@string/label_manage_classes"/>
 
           <com.google.android.material.button.MaterialButton
@@ -223,6 +228,7 @@
               android:id="@+id/manageSubjectsButton"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:onClick="onManageSubjectsClicked"
               android:text="@string/label_manage_courses"/>
 
         </LinearLayout>

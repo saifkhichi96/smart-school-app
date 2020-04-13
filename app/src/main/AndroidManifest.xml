@@ -64,6 +64,11 @@
         android:parentActivityName=".SchoolActivity"
         android:screenOrientation="sensorPortrait"/>
 
+    <activity android:name=".SchoolClassesActivity"
+              android:label="Manage Classes"
+              android:parentActivityName=".SchoolActivity"
+              android:screenOrientation="sensorPortrait"/>
+
   </application>
 
 </manifest>

@@ -9,6 +9,7 @@ import com.cygnus.utils.DynamicLinksUtils
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 
 /**
@@ -81,7 +82,8 @@ class InvitationTask(
                 }).addOnSuccessListener {
                     val ref = when {
                         isTeacherInvite -> invitesRef
-                        else -> invitesRef.child("classes/$classId/invites/")
+                        else -> FirebaseDatabase.getInstance()
+                                .getReference("$referral/classes/$classId/invites/")
                     }
                     ref.push().setValue("$inviteeEmail:$state")
                 }

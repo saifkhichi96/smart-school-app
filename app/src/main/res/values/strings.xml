@@ -12,6 +12,8 @@
   <!-- Input Hints -->
   <string name="hint_blood_group">Blood Group</string>
   <string name="hint_city">City</string>
+  <string name="hint_class_name">Class Name</string>
+  <string name="hint_class_teacher">Class Teacher Email</string>
   <string name="hint_country">Country</string>
   <string name="hint_dob">Date of Birth</string>
   <string name="hint_email">Email</string>
@@ -30,12 +32,14 @@
 
   <!-- Button Labels -->
   <string name="label_add">Add</string>
+  <string name="label_edit">Edit</string>
   <string name="label_invite">Invite</string>
   <string name="label_invite_multiple">Send Multiple Invites</string>
   <string name="label_manage_classes">Class\nManagement</string>
   <string name="label_manage_courses">Course\nManagement</string>
   <string name="label_profile">Manage your Cygnus Profile</string>
   <string name="label_revoke">Revoke</string>
+  <string name="label_skip_teacher_assignment">Assign a teacher to this class later.</string>
   <string name="label_staff_invited">%d Pending</string>
   <string name="label_staff_joined">%d Joined</string>
   <string name="label_female">Female</string>
@@ -50,6 +54,10 @@
   <string name="academics_head">Academics</string>
   <string name="academics_desc">Add/Edit the classes and courses taught at your school. You can also
     assign class teachers, and select instructors for each subject.
+  </string>
+  <string name="add_class_head">Add Class</string>
+  <string name="add_class_desc">Enter details of the new class to add it to your school. Please note that each
+    school class must have a unique name.
   </string>
 
   <!-- Prompts and Explanations -->
