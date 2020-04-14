@@ -50,6 +50,23 @@ class AddStudentDialog(context: Context, private val teacherId: String, private 
             okButton.isEnabled = false
 
             val rollNo = rollNoField.text.toString().trim()
+            // TODO: Roll number must be unique
+//            FirebaseDatabase.getInstance().getReference("$referralCode/users/")
+//                    .orderByValue()
+//                    .equalTo(user.rollNo, "rollNo")
+//                    .addListenerForSingleValueEvent(object : ValueEventListener {
+//                        override fun onDataChange(snapshot: DataSnapshot) {
+//                            if (snapshot.exists()) {
+//                                onFailure("")
+//                            }
+//                        }
+//
+//                        override fun onCancelled(error: DatabaseError) {
+//
+//                        }
+//                    })
+
+
             val inputEmail = emailField.text.toString().trim()
             if (inputEmail.isEmail()) {
                 InvitationTask(context, schoolId, inputEmail, classId, rollNo).start { task ->
