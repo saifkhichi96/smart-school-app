@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardChildActivity
+import com.cygnus.dao.Invite
 import com.cygnus.model.Subject
 import com.cygnus.model.User
 import com.cygnus.view.AddSubjectDialog
@@ -27,7 +28,7 @@ class SchoolSubjectsActivity : DashboardChildActivity() {
         setContentView(R.layout.activity_list)
 
         // Read staff list from intent
-        val invites = intent.getParcelableArrayListExtra<SchoolDashboardActivity.Invite>(CygnusApp.EXTRA_INVITES)
+        val invites = intent.getParcelableArrayListExtra<Invite>(CygnusApp.EXTRA_INVITES)
         if (invites == null) {
             finish()
             return

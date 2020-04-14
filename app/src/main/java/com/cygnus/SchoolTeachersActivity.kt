@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardChildActivity
+import com.cygnus.dao.Invite
 import com.cygnus.model.Credentials
 import com.cygnus.model.Teacher
 import com.cygnus.model.User
@@ -30,7 +31,7 @@ import kotlinx.android.synthetic.main.activity_list.*
 class SchoolTeachersActivity : DashboardChildActivity() {
 
     private lateinit var status: String
-    private lateinit var invites: ArrayList<SchoolDashboardActivity.Invite>
+    private lateinit var invites: ArrayList<Invite>
 
     private var teachers: ArrayList<Teacher> = ArrayList()
     private var adapter: TeacherAdapter? = null
@@ -48,7 +49,7 @@ class SchoolTeachersActivity : DashboardChildActivity() {
         this.status = status
 
         // Read staff list from intent
-        val invites = intent.getParcelableArrayListExtra<SchoolDashboardActivity.Invite>(CygnusApp.EXTRA_INVITES)
+        val invites = intent.getParcelableArrayListExtra<Invite>(CygnusApp.EXTRA_INVITES)
         if (invites == null) {
             finish()
             return
