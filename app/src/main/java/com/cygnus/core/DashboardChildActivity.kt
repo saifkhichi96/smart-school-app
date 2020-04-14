@@ -1,5 +1,6 @@
 package com.cygnus.core
 
+import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import com.cygnus.R
 
@@ -14,6 +15,13 @@ abstract class DashboardChildActivity : SecureActivity() {
     override fun onNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if (item.itemId == android.R.id.home) {
+            super.onBackPressed()
+            true
+        } else super.onOptionsItemSelected(item)
     }
 
 }

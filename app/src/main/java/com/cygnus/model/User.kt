@@ -38,6 +38,18 @@ sealed class User(var id: String, var name: String, var credentials: Credentials
             setChanged()
         }
 
+    var bloodType: String? = null
+        set(value) {
+            field = value
+            setChanged()
+        }
+
+    var gender: String? = null
+        set(value) {
+            field = value
+            setChanged()
+        }
+
     companion object {
         @JvmStatic
         fun valueOf(s: String?): KClass<out User>? {
@@ -74,8 +86,8 @@ class School(id: String, name: String, credentials: Credentials) : User(id, name
  *
  * @property classId The class to which this student belongs.
  * @property dateOfBirth (Optional) Student's date of birth.
- * @property fatherName (Optional) Name of the student's father.
- * @property motherName (Optional) Name of the student's mother.
+ * @property emergencyContact (Optional) Name of the student's father.
+ * @property emergencyEmail (Optional) Name of the student's mother.
  * @property rollNo Student's unique roll number in class.
  *
  * @author saifkhichi96
@@ -93,13 +105,19 @@ class Student(id: String, name: String, credentials: Credentials, var classId: S
             setChanged()
         }
 
-    var fatherName: String? = null
+    var emergencyContact: String? = null
         set(value) {
             field = value
             setChanged()
         }
 
-    var motherName: String? = null
+    var emergencyPhone: String? = null
+        set(value) {
+            field = value
+            setChanged()
+        }
+
+    var emergencyEmail: String? = null
         set(value) {
             field = value
             setChanged()
