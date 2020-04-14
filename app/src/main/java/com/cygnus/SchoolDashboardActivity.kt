@@ -4,7 +4,6 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.os.Parcelable
 import android.view.View
 import android.widget.Toast
 import androidmads.library.qrgenearator.QRGContents
@@ -12,6 +11,7 @@ import androidmads.library.qrgenearator.QRGEncoder
 import co.aspirasoft.util.InputUtils.isNotBlank
 import co.aspirasoft.util.InputUtils.showError
 import com.cygnus.core.DashboardActivity
+import com.cygnus.dao.Invite
 import com.cygnus.model.School
 import com.cygnus.model.User
 import com.cygnus.tasks.InvitationTask
@@ -22,7 +22,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ValueEventListener
-import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_school.*
 
 /**
@@ -266,17 +265,6 @@ class SchoolDashboardActivity : DashboardActivity() {
 
                     }
                 })
-    }
-
-    @Parcelize
-    data class Invite(val id: String, val invitee: String, val status: String) : Parcelable {
-        override fun equals(other: Any?): Boolean {
-            return if (other is Invite?) other?.id == this.id else super.equals(other)
-        }
-
-        override fun hashCode(): Int {
-            return id.hashCode()
-        }
     }
 
 }

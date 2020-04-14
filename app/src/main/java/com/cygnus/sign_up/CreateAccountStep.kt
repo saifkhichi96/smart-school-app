@@ -7,23 +7,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.text.HtmlCompat
 import co.aspirasoft.util.InputUtils.isNotBlank
 import co.aspirasoft.util.InputUtils.showError
 import co.aspirasoft.view.WizardViewStep
 import com.cygnus.R
 import com.cygnus.model.Teacher
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 class CreateAccountStep : WizardViewStep("Welcome to Cygnus") {
 
+    private lateinit var signUpWelcomeMessage: TextView
     private lateinit var passwordField: TextInputEditText
     private lateinit var passwordRepeatField: TextInputEditText
-    private lateinit var signUpWelcomeMessage: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.signup_step_create_account, container, false)
 
+        // Get UI references
+        signUpWelcomeMessage = v.findViewById(R.id.signUpMessage)
         passwordField = v.findViewById(R.id.passwordField)
+        passwordRepeatField = v.findViewById(R.id.passwordRepeatField)
+
+        // Mark required fields
+        markRequired(passwordField.parent.parent as TextInputLayout)
+        markRequired(passwordRepeatField.parent.parent as TextInputLayout)
+
+        // Validate passwords as they are typed
         passwordField.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -31,8 +42,6 @@ class CreateAccountStep : WizardViewStep("Welcome to Cygnus") {
                 passwordField.isNotBlank(true)
             }
         })
-
-        passwordRepeatField = v.findViewById(R.id.passwordRepeatField)
         passwordRepeatField.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -41,8 +50,6 @@ class CreateAccountStep : WizardViewStep("Welcome to Cygnus") {
                 checkPasswordValid()
             }
         })
-
-        signUpWelcomeMessage = v.findViewById(R.id.signUpMessage)
 
         return v
     }
@@ -74,11 +81,23 @@ class CreateAccountStep : WizardViewStep("Welcome to Cygnus") {
         return if (passwordField.isNotBlank(true) &&
                 passwordRepeatField.isNotBlank(true) &&
                 checkPasswordValid()) {
-            data.put(R.id.passwordField, passwordField.text.toString().trim())
+            val password = passwordField.text.toString().trim()
+
+            data.apply {
+                put(R.id.passwordField, password)
+            }
             true
-        } else {
-            false
-        }
+        } else false
+    }
+
+    /**
+     * Appends a red asterisk to the [field]'s hint to mark it as required.
+     */
+    private fun markRequired(field: TextInputLayout) {
+        field.hint = HtmlCompat.fromHtml(
+                "${field.hint} ${getString(R.string.required_asterisk)}",
+                HtmlCompat.FROM_HTML_MODE_COMPACT
+        )
     }
 
 }

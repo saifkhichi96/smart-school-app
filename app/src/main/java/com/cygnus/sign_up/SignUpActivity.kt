@@ -1,16 +1,17 @@
 package com.cygnus.sign_up
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.util.SparseArray
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.cygnus.CygnusApp
 import com.cygnus.R
-import com.cygnus.model.Credentials
-import com.cygnus.model.Student
-import com.cygnus.model.Teacher
-import com.cygnus.model.User
+import com.cygnus.SignInActivity
+import com.cygnus.dao.Invite
+import com.cygnus.dao.InvitesDao
+import com.cygnus.model.*
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -23,9 +24,9 @@ import kotlin.reflect.KClass
  *
  * Purpose of this activity is to let users sign up for new accounts.
  *
- * Users are only allowed to sign up if they have a valid [referralCode]
- * Referrals are issued by `School` users for creating `Teacher` account,
- * and by `Teacher` users for creating `Student` accounts.
+ * Users are only allowed to sign up if they have a valid [referralCode].
+ * This code is issued by a [School] for creating [Teacher] account, and
+ * by [Teacher] for creating [Student] accounts.
  *
  * @property accountType The type of user account to be created.
  * @property emailLink The magic link to use for this sign up.
@@ -35,13 +36,37 @@ import kotlin.reflect.KClass
  */
 class SignUpActivity : AppCompatActivity() {
 
-    private lateinit var emailLink: String
     private lateinit var referralCode: String
+    private lateinit var emailLink: String
     lateinit var accountType: KClass<out User>
-    private var classId: String? = null
-    private var rollNo: String? = null
 
-    private val isStudentSignUp get() = classId != null && rollNo != null
+    /**
+     * Reference to the sent invite, or null if no invite found.
+     *
+     * This value is retrieved from database on sign up time, and must be
+     * non-null for sign up to proceed.
+     */
+    private var invite: Invite? = null
+
+    /**
+     * The id of the [SchoolClass] to which this user belongs.
+     *
+     * This should be defined for all students and class teachers, and
+     * `null` for regular teachers.
+     */
+    private var classId: String? = null
+
+    /**
+     * The roll number of the [Student] who is registring.
+     *
+     * This is only defined if current user is a student, else `null`.
+     */
+    private var rollNumber: String? = null
+
+    /**
+     * Is this a [Student] signing up for new account?
+     */
+    private val isStudentSignUp get() = classId != null && rollNumber != null
 
     /**
      * Overrides the onCreate activity lifecycle method.
@@ -52,13 +77,12 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
-        Log.i("Cygnus", "Inside SignUpActivity.onCreate()...")
 
         // Read sign up parameters from intent
         emailLink = intent.data.toString()
         referralCode = intent.getStringExtra(CygnusApp.EXTRA_REFERRAL_CODE) ?: ""
         classId = intent.getStringExtra(CygnusApp.EXTRA_STUDENT_CLASS_ID)
-        rollNo = intent.getStringExtra(CygnusApp.EXTRA_STUDENT_ROLL_NO)
+        rollNumber = intent.getStringExtra(CygnusApp.EXTRA_STUDENT_ROLL_NO)
         val accountType = User.valueOf(intent.getStringExtra(CygnusApp.EXTRA_ACCOUNT_TYPE))
 
         // Sign up cannot proceed if no referral code or account type provided
@@ -67,15 +91,10 @@ class SignUpActivity : AppCompatActivity() {
             return
         }
         this.accountType = accountType
-        Log.i("Cygnus", "Class: $classId")
-        Log.i("Cygnus", "Roll # $rollNo")
-        if (accountType == Student::class && (rollNo.isNullOrBlank() || classId.isNullOrBlank())) {
+        if (accountType == Student::class && (rollNumber.isNullOrBlank() || classId.isNullOrBlank())) {
             finish()
             return
         }
-
-        // Referral code must be still valid
-        verifyReferralCode()
 
         // Set up views
         wizardView.setupWithWizardSteps(supportFragmentManager, when {
@@ -83,7 +102,7 @@ class SignUpActivity : AppCompatActivity() {
                     CreateAccountStep(),
                     IntroductionStep(),
                     ContactInfoStep(),
-                    PersonalInfoStep()
+                    EmergencyInfoStep()
             )
             else -> listOf(
                     CreateAccountStep(),
@@ -96,126 +115,142 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Callback for when the sign up form is submitted.
+     *
+     * This method retrieves form data and creates a valid instance of
+     * a [User] subclass representing the current user.
+     */
     private fun onSubmit(data: SparseArray<Any>) {
-        val name = data[R.id.nameField].toString()
-        val address = data[R.id.streetField].toString()
-        val phone = data[R.id.phoneField].toString()
         val classId = classId ?: ""
+        val rollNumber = rollNumber ?: ""
 
-        val email = data[R.id.emailField].toString()
+        // Account credentials
         val password = data[R.id.passwordField].toString()
 
-        val rollNo = rollNo ?: ""
+        // Personal info
+        val imageUri = data[R.id.userImage].toString() // TODO: Upload image to FirebaseStorage
+        val name = data[R.id.nameField].toString()
         val dateOfBirth = data[R.id.dateOfBirthField].toString()
-        val fatherName = data[R.id.fatherNameField].toString()
-        val motherName = data[R.id.motherNameField].toString()
+        val gender = data[R.id.genderField].toString()
+
+        // Contact info
+        val email = data[R.id.emailField].toString()
+        val address = data[R.id.streetField].toString()
+        val phone = data[R.id.phoneField].toString()
+
+        // Emergency info
+        val bloodType = data[R.id.bloodTypeField].toString()
+        val emergencyContact = data[R.id.emergencyContactNameField].toString()
+        val emergencyEmail = data[R.id.emergencyContactEmailField].toString()
+        val emergencyPhone = data[R.id.emergencyContactPhoneField].toString()
 
         when {
             isStudentSignUp -> Student().apply {
                 this.classId = classId
-                this.rollNo = rollNo
+                this.rollNo = rollNumber
                 this.dateOfBirth = dateOfBirth
-                this.fatherName = fatherName
-                this.motherName = motherName
+                this.emergencyContact = emergencyContact
+                this.emergencyEmail = emergencyEmail
+                this.emergencyPhone = emergencyPhone
             }
             else -> Teacher().apply {
                 this.classId = classId
             }
         }.also {
             it.name = name
-            it.credentials = Credentials(email, password)
+            it.credentials = Credentials(email, "")
             it.address = address
             it.phone = phone
+            it.bloodType = bloodType
+            it.gender = gender
 
-            onUserCreated(it)
+            onUserCreated(it, password)
         }
     }
 
-    private fun onUserCreated(user: User) {
+    /**
+     * Callback for when a valid user has been created.
+     *
+     * This method checks the validates the invite before proceeding with
+     * the sign up process. Validity checks include confirming existence
+     * of school in database, checking that the invitation still exists
+     * and has a `Pending` state.
+     */
+    private fun onUserCreated(user: User, password: String) {
+        InvitesDao.checkInviteStatus(
+                referralCode,
+                user.email,
+                OnSuccessListener {
+                    invite = it
+                    when (invite?.status) {
+                        getString(R.string.status_invite_pending) -> onVerificationSuccess(user, password)
+                        getString(R.string.status_invite_accepted) -> onFailure(getString(R.string.error_invitation_accepted))
+                        else -> onFailure()
+                    }
+                }
+        )
+    }
+
+    /**
+     * Callback for when invitation verification succeeds.
+     *
+     * This method performs the actual sign up task.
+     */
+    private fun onVerificationSuccess(user: User, password: String) {
         val auth = FirebaseAuth.getInstance()
+        val db = FirebaseDatabase.getInstance()
         if (auth.isSignInWithEmailLink(emailLink)) {
             auth.signInWithEmailLink(user.email, emailLink)
                     .addOnSuccessListener { result ->
                         result.user?.let { firebaseUser ->
                             user.id = firebaseUser.uid
-                            FirebaseDatabase.getInstance().reference
-                                    .updateChildren(mapOf(
-                                            "$referralCode/users/${user.id}/" to user,
-                                            "user_schools/${user.id}/" to referralCode)
-                                    )
-                                    .addOnSuccessListener {
-                                        firebaseUser.updatePassword(user.credentials.password)
-                                                .addOnSuccessListener {
-                                                    Toast.makeText(this, "You are now registered", Toast.LENGTH_LONG).show()
-                                                    finish()
-                                                }
-                                                .addOnFailureListener { ex ->
-                                                    Toast.makeText(this, ex.message
-                                                            ?: "Sign up failed", Toast.LENGTH_LONG).show()
-                                                    result.credential?.let { credential ->
-                                                        firebaseUser.reauthenticate(credential)
-                                                                .addOnCompleteListener {
-                                                                    firebaseUser.delete()
-                                                                }
-                                                    }
-                                                }
-                                    }
-                                    .addOnFailureListener { ex ->
-                                        Toast.makeText(this, ex.message ?: "Sign up failed", Toast.LENGTH_LONG).show()
-                                        result.credential?.let { credential ->
-                                            firebaseUser.reauthenticate(credential)
-                                                    .addOnCompleteListener {
-                                                        firebaseUser.delete()
-                                                    }
+                            db.reference.updateChildren(mapOf(
+                                    "$referralCode/users/${user.id}/" to user,  // user details
+                                    "user_schools/${user.id}/" to referralCode, // link to user's school
+                                    "$referralCode/invites/${invite!!.id}/"     // mark invite as `Accepted`
+                                            to "${user.email}:${getString(R.string.status_invite_accepted)}}"
+                            )).addOnSuccessListener {
+                                firebaseUser.updatePassword(password)
+                                        .addOnSuccessListener {
+                                            startActivity(Intent(this, SignInActivity::class.java).apply {
+                                                putExtra(CygnusApp.EXTRA_NEW_SIGN_UP, true)
+                                            })
+                                            finish()
                                         }
-                                    }
+                            }.addOnFailureListener { ex ->
+                                onFailure(ex.message ?: getString(R.string.error_sign_up_failed))
+                                result.credential?.let { credential ->
+                                    firebaseUser.reauthenticate(credential)
+                                            .addOnCompleteListener {
+                                                firebaseUser.delete()
+                                            }
+                                }
+                            }
                         }
                     }
                     .addOnFailureListener { ex ->
-                        Toast.makeText(this, ex.message ?: "Sign up failed", Toast.LENGTH_LONG).show()
+                        onFailure(ex.message ?: getString(R.string.error_sign_up_failed))
                     }
-        }
+        } else onFailure()
     }
 
     /**
-     * Checks the validity of referral code.
+     * Called when the invitation could not be verified.
      *
-     * Validity checks include confirming existence of school in database,
-     * checking that the invitation still exists and has a `Pending` state.
-     */
-    private fun verifyReferralCode() {
-        // TODO: Verify the invitation reference
-        // FIXME: Sign up is being allowed even if invitation withdrawn
-//        CygnusApp.refToInvites(referralCode)
-//                .addListenerForSingleValueEvent(object : ValueEventListener {
-//                    override fun onDataChange(snapshot: DataSnapshot) {
-//                        if (!snapshot.exists()) {
-//                            onVerificationFailure()
-//                        }
-//                    }
-//
-//                    override fun onCancelled(error: DatabaseError) {
-//                        onVerificationFailure(error.toException().message)
-//                    }
-//                })
-    }
-
-    /**
-     * Called when the referral code could not be verified.
-     *
-     * An error message is displayed and the activity terminates.
+     * An error message is displayed.
      *
      * @param error An (optional) description of cause of failure.
      */
-    private fun onVerificationFailure(error: String? = null) {
-        Toast.makeText(
-                this,
-                error ?: "Link verification failed. Please ask your admin to issue a new invitation.",
-                Toast.LENGTH_LONG
-        ).show()
-        finish()
+    private fun onFailure(error: String? = null) {
+        Toast.makeText(this, error ?: getString(R.string.error_invitation_not_found), Toast.LENGTH_LONG).show()
     }
 
+    /**
+     * Overrides back button behaviour.
+     *
+     * Asks for a confirmation before closing the activity and canceling sign up.
+     */
     override fun onBackPressed() {
         if (!wizardView.onBackPressed()) {
             MaterialAlertDialogBuilder(this)

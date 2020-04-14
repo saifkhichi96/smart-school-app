@@ -9,7 +9,6 @@ import com.cygnus.utils.DynamicLinksUtils
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 
 /**
@@ -64,11 +63,7 @@ class InvitationTask(
      * Requests list of existing users.
      */
     override fun init(): Query {
-        return if (this.isTeacherInvite) {
-            invitesRef.orderByValue()
-        } else {
-            return invitesRef.child("classes/$classId/invites/")
-        }
+        return invitesRef.orderByValue()
     }
 
     /**
@@ -80,12 +75,7 @@ class InvitationTask(
                     isTeacherInvite -> DynamicLinksUtils.createSignUpActionForTeacher(referral)
                     else -> DynamicLinksUtils.createSignUpActionForStudent(referral, rollNo!!, classId!!)
                 }).addOnSuccessListener {
-                    val ref = when {
-                        isTeacherInvite -> invitesRef
-                        else -> FirebaseDatabase.getInstance()
-                                .getReference("$referral/classes/$classId/invites/")
-                    }
-                    ref.push().setValue("$inviteeEmail:$state")
+                    invitesRef.push().setValue("$inviteeEmail:$state")
                 }
 
         return DummyTask(null)

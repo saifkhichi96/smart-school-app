@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import co.aspirasoft.util.InputUtils.isNotBlank
 import com.cygnus.model.*
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -31,6 +32,16 @@ class SignInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
+
+        // Show a welcome message if this is a new user
+        if (intent.getBooleanExtra(CygnusApp.EXTRA_NEW_SIGN_UP, false)) {
+            FirebaseAuth.getInstance().signOut()
+            Snackbar.make(
+                    signInButton,
+                    "Congratulations! Use your email/password to sign into your new account now.",
+                    Snackbar.LENGTH_LONG
+            ).show()
+        }
 
         signInButton.setOnClickListener { signIn() }
     }

@@ -37,6 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/hint_email"
+            app:helperText="@string/use_invited_email"
             app:boxBackgroundColor="@android:color/transparent">
 
           <com.google.android.material.textfield.TextInputEditText

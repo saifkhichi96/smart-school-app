@@ -80,8 +80,8 @@ class SplashActivity : AppCompatActivity() {
                 val i = Intent(this, SignUpActivity::class.java)
                 i.putExtra(CygnusApp.EXTRA_REFERRAL_CODE, target.getQueryParameter(CygnusApp.PARAM_REFERRAL_CODE))
                 i.putExtra(CygnusApp.EXTRA_ACCOUNT_TYPE, target.getQueryParameter(CygnusApp.PARAM_ACCOUNT_TYPE))
-                i.putExtra(CygnusApp.EXTRA_STUDENT_CLASS_ID, target.getQueryParameter(CygnusApp.PARAM_ACCOUNT_TYPE))
-                i.putExtra(CygnusApp.EXTRA_STUDENT_ROLL_NO, target.getQueryParameter(CygnusApp.PARAM_ACCOUNT_TYPE))
+                i.putExtra(CygnusApp.EXTRA_STUDENT_CLASS_ID, target.getQueryParameter(CygnusApp.PARAM_STUDENT_CLASS_ID))
+                i.putExtra(CygnusApp.EXTRA_STUDENT_ROLL_NO, target.getQueryParameter(CygnusApp.PARAM_STUDENT_ROLL_NO))
                 i.data = deepLink
 
                 startActivity(i)

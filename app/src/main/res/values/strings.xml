@@ -1,5 +1,6 @@
 <resources>
   <string name="app_name">Cygnus School App</string>
+  <string name="required_asterisk"><![CDATA[<font color=\'#cc0029\'>*</font>]]></string>
 
   <!-- Placeholders -->
   <string name="ph_address">74 Bangur Avenue, Kolkata, West Bengal</string>
@@ -20,8 +21,7 @@
   <string name="hint_dob">Date of Birth</string>
   <string name="hint_email">Email</string>
   <string name="hint_emails">Emails</string>
-  <string name="hint_father">Father\'s name</string>
-  <string name="hint_mother">Mother\'s name</string>
+  <string name="hint_emergency_contact">Emergency Contact</string>
   <string name="hint_name">Name</string>
   <string name="hint_password">Password</string>
   <string name="hint_password_confirm">Confirm Password</string>
@@ -77,6 +77,8 @@
   </string>
 
   <!-- Prompts and Explanations -->
+  <string name="use_invited_email">Please use the same email address on which you received the sign up invitation.
+  </string>
   <string name="emails_input_explanation">Please write one email address on each line.</string>
   <string name="sign_up_welcome_msg">%s %s,\n\nYou have been invited by your %s to join the Cygnus App.
     \n\nPlease complete the registration process by creating a password for your new account.
@@ -102,6 +104,13 @@
   </string>
   <string name="error_password_mismatch">Passwords do not match.</string>
   <string name="error_email_invalid">Invalid email address.</string>
+  <string name="error_blood_type_invalid">Invalid blood type.</string>
+  <string name="error_invitation_accepted">This user is already registered. Please make sure you are using the email on
+    which you received the invitation.
+  </string>
+  <string name="error_invitation_not_found">Link verification failed. Please ask your admin to issue a new invitation.
+  </string>
+  <string name="error_sign_up_failed">Sign up failed.</string>
 
   <!-- Menu Actions -->
   <string name="menu_dashboard">Dashboard</string>
@@ -110,5 +119,16 @@
   <string name="menu_notice_board">Notice Board</string>
   <string name="menu_account">Account</string>
   <string name="menu_sign_out">Sign Out</string>
+
+  <string-array name="blood_types">
+    <item>O+</item>
+    <item>O-</item>
+    <item>A+</item>
+    <item>A-</item>
+    <item>B+</item>
+    <item>B-</item>
+    <item>AB+</item>
+    <item>AB-</item>
+  </string-array>
 
 </resources>
