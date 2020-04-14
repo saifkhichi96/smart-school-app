@@ -5,19 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Parcelable
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
 import co.aspirasoft.util.InputUtils.isNotBlank
 import co.aspirasoft.util.InputUtils.showError
+import com.cygnus.core.DashboardActivity
 import com.cygnus.model.School
 import com.cygnus.model.User
 import com.cygnus.tasks.InvitationTask
 import com.cygnus.view.EmailsInputDialog
-import com.cygnus.view.LogoutConfirmationDialog
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DataSnapshot
@@ -28,7 +26,7 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_school.*
 
 /**
- * SchoolActivity is the homepage of `School` users.
+ * SchoolDashboardActivity is the schools' homepage.
  *
  * Purpose of this activity is to provide a UI to the schools
  * which allows them to perform certain administrative tasks.
@@ -36,7 +34,7 @@ import kotlinx.android.synthetic.main.activity_school.*
  * @author saifkhichi96
  * @since 1.0.0
  */
-class SchoolActivity : SecureActivity() {
+class SchoolDashboardActivity : DashboardActivity() {
 
     private val invitedStaff = ArrayList<Invite>()
     private val joinedStaff = ArrayList<Invite>()
@@ -53,21 +51,6 @@ class SchoolActivity : SecureActivity() {
         trackSentInvites() // start the live counters
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.school_action_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_sign_out -> {
-                LogoutConfirmationDialog.show(this)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     /**
      * Displays the signed in school's details.
      */
@@ -82,15 +65,13 @@ class SchoolActivity : SecureActivity() {
     }
 
     fun onManageClassesClicked(v: View) {
-        startActivity(Intent(this, SchoolClassesActivity::class.java).apply {
-            putExtra(CygnusApp.EXTRA_USER, currentUser)
+        startSecurely(SchoolClassesActivity::class.java, Intent().apply {
             putExtra(CygnusApp.EXTRA_INVITES, joinedStaff)
         })
     }
 
     fun onManageSubjectsClicked(v: View) {
-        startActivity(Intent(this, SchoolSubjectsActivity::class.java).apply {
-            putExtra(CygnusApp.EXTRA_USER, currentUser)
+        startSecurely(SchoolSubjectsActivity::class.java, Intent().apply {
             putExtra(CygnusApp.EXTRA_INVITES, joinedStaff)
         })
     }
@@ -142,16 +123,15 @@ class SchoolActivity : SecureActivity() {
     /**
      * Handles clicks on invited staff button.
      *
-     * Opens the [TeachersActivity] with a list of staff members who have pending
+     * Opens the [SchoolTeachersActivity] with a list of staff members who have pending
      * invitations.
      */
     fun onInvitedStaffClicked(v: View) {
         if (invitedStaff.size > 0) {
-            val i = Intent(this, TeachersActivity::class.java)
-            i.putExtra(CygnusApp.EXTRA_USER, currentUser)
-            i.putExtra(CygnusApp.EXTRA_INVITE_STATUS, getString(R.string.status_invite_pending))
-            i.putExtra(CygnusApp.EXTRA_INVITES, invitedStaff)
-            startActivity(i)
+            startSecurely(SchoolTeachersActivity::class.java, Intent().apply {
+                putExtra(CygnusApp.EXTRA_INVITE_STATUS, getString(R.string.status_invite_pending))
+                putExtra(CygnusApp.EXTRA_INVITES, invitedStaff)
+            })
         } else {
             Snackbar.make(joinedStaffButton, "No staff members invited yet.", Snackbar.LENGTH_SHORT).show()
         }
@@ -160,16 +140,15 @@ class SchoolActivity : SecureActivity() {
     /**
      * Handles clicks on joined staff button.
      *
-     * Opens the [TeachersActivity] with a list of staff members who have accepted
+     * Opens the [SchoolTeachersActivity] with a list of staff members who have accepted
      * their invitations and joined the app.
      */
     fun onJoinedStaffClicked(v: View) {
         if (joinedStaff.size > 0) {
-            val i = Intent(this, TeachersActivity::class.java)
-            i.putExtra(CygnusApp.EXTRA_USER, currentUser)
-            i.putExtra(CygnusApp.EXTRA_INVITE_STATUS, getString(R.string.status_invite_accepted))
-            i.putExtra(CygnusApp.EXTRA_INVITES, joinedStaff)
-            startActivity(i)
+            startSecurely(SchoolTeachersActivity::class.java, Intent().apply {
+                putExtra(CygnusApp.EXTRA_INVITE_STATUS, getString(R.string.status_invite_accepted))
+                putExtra(CygnusApp.EXTRA_INVITES, joinedStaff)
+            })
         } else {
             Snackbar.make(joinedStaffButton, "No staff members have joined yet.", Snackbar.LENGTH_SHORT).show()
         }
@@ -184,7 +163,7 @@ class SchoolActivity : SecureActivity() {
         InvitationTask(this, currentUser.id, email)
                 .start { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(this@SchoolActivity, getString(R.string.status_invitation_sent), Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@SchoolDashboardActivity, getString(R.string.status_invitation_sent), Toast.LENGTH_LONG).show()
                         emailField.setText("")
                     } else {
                         emailField.showError("Email ${task.exception?.message ?: "could not be sent"}.")
@@ -269,12 +248,12 @@ class SchoolActivity : SecureActivity() {
                                 }
                             }
 
-                            this@SchoolActivity.invitedStaff.apply {
+                            this@SchoolDashboardActivity.invitedStaff.apply {
                                 clear()
                                 addAll(invitedStaff)
                             }
 
-                            this@SchoolActivity.joinedStaff.apply {
+                            this@SchoolDashboardActivity.joinedStaff.apply {
                                 clear()
                                 addAll(joinedStaff)
                             }
@@ -287,18 +266,6 @@ class SchoolActivity : SecureActivity() {
 
                     }
                 })
-    }
-
-    private var doubleBackToExitPressedOnce = false
-    override fun onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed()
-            return
-        }
-
-        this.doubleBackToExitPressedOnce = true
-        Toast.makeText(this, "Press back button twice to exit.", Toast.LENGTH_SHORT).show()
-        Handler().postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
     }
 
     @Parcelize

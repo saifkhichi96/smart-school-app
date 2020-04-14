@@ -136,6 +136,10 @@ class Teacher(id: String, name: String, credentials: Credentials) : User(id, nam
             setChanged()
         }
 
+    fun isClassTeacher(): Boolean {
+        return !this.classId.isNullOrBlank()
+    }
+
     fun addSubject(name: String) {
         subjects.add(Subject(name, this.id, ""))
         setChanged()

@@ -2,22 +2,21 @@ package com.cygnus
 
 import android.content.Context
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import co.aspirasoft.adapter.ModelViewAdapter
+import com.cygnus.core.DashboardChildActivity
 import com.cygnus.model.Credentials
 import com.cygnus.model.Teacher
 import com.cygnus.model.User
 import com.cygnus.view.TeacherView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.activity_attendance.toolbar
-import kotlinx.android.synthetic.main.activity_teachers.*
+import kotlinx.android.synthetic.main.activity_list.*
 
 /**
- * TeachersActivity shows a list of staff members.
+ * SchoolTeachersActivity shows a list of staff members.
  *
  * Purpose of this activity is to allow schools to manage their staff members.
  *
@@ -28,19 +27,17 @@ import kotlinx.android.synthetic.main.activity_teachers.*
  * @author saifkhichi96
  * @since 1.0.0
  */
-class TeachersActivity : SecureActivity() {
+class SchoolTeachersActivity : DashboardChildActivity() {
 
     private lateinit var status: String
-    private lateinit var invites: ArrayList<SchoolActivity.Invite>
+    private lateinit var invites: ArrayList<SchoolDashboardActivity.Invite>
 
     private var teachers: ArrayList<Teacher> = ArrayList()
     private var adapter: TeacherAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_teachers)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setContentView(R.layout.activity_list)
 
         // Read invitation status from intent
         val status = intent.getStringExtra(CygnusApp.EXTRA_INVITE_STATUS)
@@ -51,7 +48,7 @@ class TeachersActivity : SecureActivity() {
         this.status = status
 
         // Read staff list from intent
-        val invites = intent.getParcelableArrayListExtra<SchoolActivity.Invite>(CygnusApp.EXTRA_INVITES)
+        val invites = intent.getParcelableArrayListExtra<SchoolDashboardActivity.Invite>(CygnusApp.EXTRA_INVITES)
         if (invites == null) {
             finish()
             return
@@ -59,11 +56,13 @@ class TeachersActivity : SecureActivity() {
         this.invites = invites
 
         supportActionBar?.title = if (status == getString(R.string.status_invite_accepted)) {
-            teachersList.divider = null
+            contentList.divider = null
             "Current Staff"
         } else {
             "Invited Staff"
         }
+
+        addButton.visibility = View.GONE
     }
 
     override fun updateUI(currentUser: User) {
@@ -99,17 +98,7 @@ class TeachersActivity : SecureActivity() {
         }
 
         adapter = TeacherAdapter(this, teachers)
-        teachersList.adapter = adapter
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
+        contentList.adapter = adapter
     }
 
     private inner class TeacherAdapter(context: Context, val teachers: List<Teacher>)
@@ -122,15 +111,15 @@ class TeachersActivity : SecureActivity() {
             v.findViewById<Button>(R.id.revokeInviteButton).setOnClickListener {
                 for (invite in invites) {
                     if (invite.invitee == email) {
-                        Snackbar.make(teachersList, "Revoke invite to $email?", Snackbar.LENGTH_INDEFINITE)
+                        Snackbar.make(contentList, "Revoke invite to $email?", Snackbar.LENGTH_INDEFINITE)
                                 .setAction(getString(R.string.label_revoke)) {
                                     CygnusApp.refToInvites(currentUser.id)
                                             .child(invite.id)
                                             .removeValue()
                                             .addOnSuccessListener {
                                                 invites.remove(invite)
-                                                this@TeachersActivity.teachers.remove(teacher)
-                                                this@TeachersActivity.adapter?.notifyDataSetChanged()
+                                                this@SchoolTeachersActivity.teachers.remove(teacher)
+                                                this@SchoolTeachersActivity.adapter?.notifyDataSetChanged()
                                             }
                                 }
                                 .show()

@@ -1,7 +1,9 @@
-package com.cygnus
+package com.cygnus.core
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.cygnus.CygnusApp
 import com.cygnus.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -11,10 +13,16 @@ import com.google.firebase.auth.FirebaseUser
  *
  * Extend this class to make an activity secure. A `secured` activity will only be
  * allowed to open if a [FirebaseUser] is authenticated and the [User] instance of
- * signed in user is passed to the activity intent with [CygnusApp.EXTRA_USER] tag.
+ * signed in user is passed to the activity intent with [CygnusApp.EXTRA_USER] tag
+ * and the unique [schoolId] to which this user is associated is passed with the
+ * [CygnusApp.EXTRA_SCHOOL] tag.
+ *
+ * @author saifkhichi96
+ * @since 1.0.0
  */
 abstract class SecureActivity : AppCompatActivity() {
 
+    protected lateinit var schoolId: String
     protected lateinit var currentUser: User
 
     /**
@@ -33,6 +41,8 @@ abstract class SecureActivity : AppCompatActivity() {
             user.id == signedInUser.uid -> user                     // and both must belong to same user
             else -> return finish()                                 // else finish activity
         }
+
+        schoolId = intent.getStringExtra(CygnusApp.EXTRA_SCHOOL) ?: return finish()
     }
 
     /**
@@ -44,6 +54,28 @@ abstract class SecureActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         updateUI(currentUser)
+    }
+
+    /**
+     * Overrides the back navigation button in action bar.
+     *
+     * Hooks the action bar back button to default back action.
+     */
+    override fun onNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
+    /**
+     * Ensures required arguments are forwarded when opening another secure activity.
+     */
+    protected fun startSecurely(target: Class<out SecureActivity>, src: Intent? = null) {
+        startActivity(Intent(this, target).apply {
+            this.putExtra(CygnusApp.EXTRA_USER, currentUser)
+            this.putExtra(CygnusApp.EXTRA_SCHOOL, schoolId)
+            src?.let { this.putExtras(it) }
+        })
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     /**

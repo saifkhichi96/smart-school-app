@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".TeacherDashboardActivity">
 
   <!-- Fixed top action bar -->
   <com.google.android.material.appbar.AppBarLayout
@@ -31,6 +31,7 @@
       app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/classTeacherCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -61,7 +62,7 @@
                 style="@style/TextAppearance.MaterialComponents.Overline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your are assigned to"/>
+                android:text="@string/teacher_class_head"/>
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/className"
@@ -69,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:text="Grade 10"/>
+                android:text="@string/ph_assigned_class"/>
 
           </LinearLayout>
 
@@ -81,14 +82,9 @@
               android:enabled="false"
               android:gravity="end|center_vertical"
               android:padding="0dp"
-              android:text="0"
-              android:textColor="@android:color/primary_text_light"
-              android:visibility="gone"
-              app:icon="@drawable/ic_classroom"
-              app:iconGravity="end"
-              app:iconPadding="4dp"
-              app:iconSize="24dp"
-              app:iconTint="@android:color/primary_text_light"/>
+              android:text="@string/ph_student_count"
+              android:textAllCaps="false"
+              android:textSize="12sp"/>
 
         </LinearLayout>
 
@@ -98,9 +94,8 @@
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:padding="0dp"
-            android:text="Manage Your Students"
+            android:text="@string/label_manage_students"
             android:textAllCaps="false"
-            android:visibility="gone"
             app:icon="@drawable/ic_students"
             app:iconSize="24dp"/>
 
@@ -110,7 +105,7 @@
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:padding="0dp"
-            android:text="Mark Attendance"
+            android:text="@string/label_mark_attendance"
             android:textAllCaps="false"
             app:icon="@drawable/ic_attendance"
             app:iconSize="24dp"/>
@@ -121,7 +116,7 @@
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:padding="0dp"
-            android:text="Announcements"
+            android:text="@string/label_announcements"
             android:textAllCaps="false"
             app:icon="@drawable/ic_announcements"
             app:iconSize="24dp"/>
@@ -136,7 +131,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:textStyle="bold"
-        android:text="Your Courses"/>
+        android:text="@string/courses_head"/>
 
     <GridView
         android:id="@+id/coursesList"

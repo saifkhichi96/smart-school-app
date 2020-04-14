@@ -4,10 +4,12 @@
   <!-- Placeholders -->
   <string name="ph_address">74 Bangur Avenue, Kolkata, West Bengal</string>
   <string name="ph_date">2 January, 1961</string>
+  <string name="ph_assigned_class">Assigned Class</string>
   <string name="ph_email">bdeshmukh91@gmail.com</string>
   <string name="ph_name">Brahman Deshmukh</string>
   <string name="ph_phone">+9125742299</string>
   <string name="ph_school">The Exemplary School</string>
+  <string name="ph_student_count">%d Student(s)</string>
 
   <!-- Input Hints -->
   <string name="hint_blood_group">Blood Group</string>
@@ -35,6 +37,7 @@
 
   <!-- Button Labels -->
   <string name="label_add">Add</string>
+  <string name="label_announcements">Announcements</string>
   <string name="label_edit">Edit</string>
   <string name="label_invite">Invite</string>
   <string name="label_invite_multiple">Send Multiple Invites</string>
@@ -47,13 +50,12 @@
   <string name="label_staff_joined">%d Joined</string>
   <string name="label_female">Female</string>
   <string name="label_male">Male</string>
+  <string name="label_manage_students">Manage Your Students</string>
+  <string name="label_mark_attendance">Mark Attendance</string>
   <string name="label_non_binary">Other</string>
+  <string name="label_see_attendance">See Attendance</string>
 
   <!-- Section Headings -->
-  <string name="staff_head">Staff</string>
-  <string name="staff_desc">Invite your team members to join Cygnus. A magic link will be emailed which
-    can be used to sign up.
-  </string>
   <string name="academics_head">Academics</string>
   <string name="academics_desc">Add/Edit the classes and courses taught at your school. You can also
     assign class teachers, and select instructors for each subject.
@@ -65,6 +67,13 @@
   <string name="add_subject_head">Add Subject</string>
   <string name="add_subject_desc">Enter details of the new subject to add it to your school. Please note that each
     subject taught to a class must have a unique name.
+  </string>
+  <string name="student_class_head">You are enrolled in</string>
+  <string name="teacher_class_head">You are assigned to</string>
+  <string name="courses_head">Your Courses</string>
+  <string name="staff_head">Staff</string>
+  <string name="staff_desc">Invite your team members to join Cygnus. A magic link will be emailed which
+    can be used to sign up.
   </string>
 
   <!-- Prompts and Explanations -->

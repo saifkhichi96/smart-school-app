@@ -116,7 +116,7 @@ class SignInActivity : AppCompatActivity() {
                             Student::class.simpleName -> Student::class.java
                             Teacher::class.simpleName -> Teacher::class.java
                             else -> School::class.java
-                        })?.let { user -> onSignedIn(user) }
+                        })?.let { user -> onSignedIn(user, schoolId) }
                     }
                 })
     }
@@ -126,14 +126,18 @@ class SignInActivity : AppCompatActivity() {
      *
      * User is automatically redirected to the appropriate screen in the app.
      */
-    private fun onSignedIn(user: User) {
+    private fun onSignedIn(user: User, schoolId: String) {
         startActivity(Intent(
                 applicationContext,
                 when (user) {
-                    is School -> SchoolActivity::class.java
-                    else -> MainActivity::class.java
+                    is School -> SchoolDashboardActivity::class.java
+                    is Teacher -> TeacherDashboardActivity::class.java
+                    else -> StudentDashboardActivity::class.java
                 }
-        ).apply { putExtra(CygnusApp.EXTRA_USER, user) })
+        ).apply {
+            putExtra(CygnusApp.EXTRA_USER, user)
+            putExtra(CygnusApp.EXTRA_SCHOOL, schoolId)
+        })
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         finish()
     }
@@ -149,7 +153,7 @@ class SignInActivity : AppCompatActivity() {
                 account.uid,
                 name,
                 Credentials(account.email!!, "")
-        ))
+        ), account.uid)
     }
 
     /**

@@ -33,4 +33,6 @@ class SchoolClass(name: String, teacherId: String) : BaseModel() {
             notifyObservers()
         }
 
+    var subjects: HashMap<String, Subject>? = null
+
 }

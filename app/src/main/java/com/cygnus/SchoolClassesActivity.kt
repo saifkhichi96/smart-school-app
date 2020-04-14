@@ -2,10 +2,10 @@ package com.cygnus
 
 import android.content.Context
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import co.aspirasoft.adapter.ModelViewAdapter
+import com.cygnus.core.DashboardChildActivity
 import com.cygnus.model.SchoolClass
 import com.cygnus.model.User
 import com.cygnus.view.AddClassDialog
@@ -13,7 +13,7 @@ import com.cygnus.view.SchoolClassView
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_list.*
 
-class SchoolClassesActivity : SecureActivity() {
+class SchoolClassesActivity : DashboardChildActivity() {
 
     private val teachers: ArrayList<String> = ArrayList()
     private val classes: ArrayList<SchoolClass> = ArrayList()
@@ -23,11 +23,9 @@ class SchoolClassesActivity : SecureActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Read staff list from intent
-        val invites = intent.getParcelableArrayListExtra<SchoolActivity.Invite>(CygnusApp.EXTRA_INVITES)
+        val invites = intent.getParcelableArrayListExtra<SchoolDashboardActivity.Invite>(CygnusApp.EXTRA_INVITES)
         if (invites == null) {
             finish()
             return
@@ -57,21 +55,6 @@ class SchoolClassesActivity : SecureActivity() {
 
                     }
                 })
-    }
-
-    override fun onNavigateUp(): Boolean {
-        onBackPressed()
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     private fun onAddClassClicked() {

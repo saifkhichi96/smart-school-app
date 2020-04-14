@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="?attr/colorPrimaryDark"
     android:theme="@style/AppTheme.Dark"
-    tools:context=".SchoolActivity">
+    tools:context=".SchoolDashboardActivity">
 
   <!-- Header Section -->
   <com.google.android.material.appbar.AppBarLayout

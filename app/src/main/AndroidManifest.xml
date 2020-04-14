@@ -34,44 +34,43 @@
     <activity android:name=".sign_up.SignUpActivity"
               android:screenOrientation="sensorPortrait"/>
 
-    <activity android:name=".MainActivity"
+    <activity android:name=".StudentDashboardActivity"
               android:screenOrientation="sensorPortrait"/>
 
-    <activity
-        android:name=".StudentsActivity"
-        android:label="Manage Students"
-        android:parentActivityName=".MainActivity"
-        android:screenOrientation="sensorPortrait"/>
-
-    <activity
-        android:name=".NoticeActivity"
-        android:label="Announcements"
-        android:parentActivityName=".MainActivity"
-        android:screenOrientation="sensorPortrait"/>
-
-    <activity
-        android:name=".AttendanceActivity"
-        android:label="Attendance"
-        android:parentActivityName=".MainActivity"
-        android:screenOrientation="sensorPortrait"/>
-
-    <activity android:name=".SchoolActivity"
+    <activity android:name=".TeacherDashboardActivity"
               android:screenOrientation="sensorPortrait"/>
 
-    <activity
-        android:name=".TeachersActivity"
-        android:label="Staff"
-        android:parentActivityName=".SchoolActivity"
-        android:screenOrientation="sensorPortrait"/>
+    <activity android:name=".StudentsActivity"
+              android:label="Manage Students"
+              android:parentActivityName=".TeacherDashboardActivity"
+              android:screenOrientation="sensorPortrait"/>
+
+    <activity android:name=".NoticeActivity"
+              android:label="Announcements"
+              android:parentActivityName=".TeacherDashboardActivity"
+              android:screenOrientation="sensorPortrait"/>
+
+    <activity android:name=".AttendanceActivity"
+              android:label="Attendance"
+              android:parentActivityName=".TeacherDashboardActivity"
+              android:screenOrientation="sensorPortrait"/>
+
+    <activity android:name=".SchoolDashboardActivity"
+              android:screenOrientation="sensorPortrait"/>
+
+    <activity android:name=".SchoolTeachersActivity"
+              android:label="Staff"
+              android:parentActivityName=".SchoolDashboardActivity"
+              android:screenOrientation="sensorPortrait"/>
 
     <activity android:name=".SchoolClassesActivity"
               android:label="Manage Classes"
-              android:parentActivityName=".SchoolActivity"
+              android:parentActivityName=".SchoolDashboardActivity"
               android:screenOrientation="sensorPortrait"/>
 
     <activity android:name=".SchoolSubjectsActivity"
               android:label="Manage Classes"
-              android:parentActivityName=".SchoolActivity"
+              android:parentActivityName=".SchoolDashboardActivity"
               android:screenOrientation="sensorPortrait"/>
 
   </application>
