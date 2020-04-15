@@ -64,6 +64,10 @@
   <string name="add_class_desc">Enter details of the new class to add it to your school. Please note that each
     school class must have a unique name.
   </string>
+  <string name="add_student_head">Add Student</string>
+  <string name="add_student_desc">Enter details of the new student to add it to your class. Please note that each
+    student must have a unique roll number and email address.
+  </string>
   <string name="add_subject_head">Add Subject</string>
   <string name="add_subject_desc">Enter details of the new subject to add it to your school. Please note that each
     subject taught to a class must have a unique name.
@@ -111,6 +115,9 @@
   <string name="error_invitation_not_found">Link verification failed. Please ask your admin to issue a new invitation.
   </string>
   <string name="error_sign_up_failed">Sign up failed.</string>
+  <string name="error_email_exists">Email already exists.</string>
+  <string name="error_roll_no_exists">Roll number already exists.</string>
+  <string name="error_invitation_not_sent">Invitation could not be sent</string>
 
   <!-- Menu Actions -->
   <string name="menu_dashboard">Dashboard</string>

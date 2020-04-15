@@ -5,10 +5,7 @@ import android.os.Bundle
 import android.view.View
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardActivity
-import com.cygnus.model.SchoolClass
-import com.cygnus.model.Subject
-import com.cygnus.model.Teacher
-import com.cygnus.model.User
+import com.cygnus.model.*
 import com.cygnus.view.SubjectView
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_dashboard_teacher.*
@@ -67,11 +64,17 @@ class TeacherDashboardActivity : DashboardActivity() {
     private fun getStudentCount() {
         onStudentCountReceived(0)
         FirebaseDatabase.getInstance()
-                .getReference("$schoolId/classes/${currentTeacher.classId}/students/")
+                .getReference("$schoolId/users/")
+                .orderByChild("classId")
+                .equalTo(currentTeacher.classId)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
-                        val t = object : GenericTypeIndicator<HashMap<*, *>>() {}
-                        snapshot.getValue(t)?.let { onStudentCountReceived(it.size) }
+                        val t = object : GenericTypeIndicator<HashMap<String, Student>>() {}
+                        var count = 0
+                        snapshot.getValue(t)?.forEach { entry ->
+                            if (entry.value.rollNo.isNotBlank()) count++
+                        }
+                        onStudentCountReceived(count)
                     }
 
                     override fun onCancelled(error: DatabaseError) {
