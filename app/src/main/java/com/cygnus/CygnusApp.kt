@@ -30,11 +30,13 @@ class CygnusApp : Application() {
         // the EXTRA_* strings are used as tags to pass
         // data between activities using Intents
         const val EXTRA_ACCOUNT_TYPE = "account_type"
+        const val EXTRA_EDITABLE_MODE = "editable"
         const val EXTRA_INVITE_STATUS = "invite_status"
         const val EXTRA_INVITES = "invites"
         const val EXTRA_NEW_SIGN_UP = "new_user"
         const val EXTRA_REFERRAL_CODE = "referral_code"
         const val EXTRA_SCHOOL = "school"
+        const val EXTRA_SCHOOL_SUBJECT = "subject"
         const val EXTRA_STUDENT_ROLL_NO = "roll_no"
         const val EXTRA_STUDENT_CLASS_ID = "class_id"
         const val EXTRA_USER = "user"

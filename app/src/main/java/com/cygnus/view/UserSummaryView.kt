@@ -22,18 +22,18 @@ import com.cygnus.model.User
  */
 class UserSummaryView : BaseView<User> {
 
+    constructor(context: Context) : super(context)
+
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+
+    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
+
     private val userImage: ImageView
     private val userNameLabel: TextView
     private val userSchoolLabel: TextView
     private val addressLabel: TextView
     private val phoneLabel: TextView
     private val birthdayLabel: TextView
-
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_user_summary, this)

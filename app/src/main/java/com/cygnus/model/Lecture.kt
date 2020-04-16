@@ -1,7 +1,7 @@
 package com.cygnus.model
 
 import co.aspirasoft.model.BaseModel
-import java.sql.Timestamp
+import java.util.*
 
 /**
  * Appointment is a model class which represents a weekly appointment.
@@ -17,10 +17,10 @@ import java.sql.Timestamp
  * @author saifkhichi96
  * @since 1.0.0
  */
-class Appointment(var dayOfWeek: Int, var startTime: Timestamp, var endTime: Timestamp, var location: String) : BaseModel() {
+class Lecture(var dayOfWeek: Int, var startTime: Date, var endTime: Date) : BaseModel() {
 
     // no-arg constructor required for Firebase
-    constructor() : this(1, Timestamp(System.currentTimeMillis()), Timestamp(System.currentTimeMillis()), "")
+    constructor() : this(1, Date(System.currentTimeMillis()), Date(System.currentTimeMillis()))
 
     init {
         if (dayOfWeek < 1 || dayOfWeek > 7) {

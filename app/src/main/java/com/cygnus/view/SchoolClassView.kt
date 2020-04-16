@@ -7,8 +7,13 @@ import android.widget.TextView
 import co.aspirasoft.view.BaseView
 import com.cygnus.model.SchoolClass
 
-class SchoolClassView(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-    : BaseView<SchoolClass>(context, attrs, defStyleAttr) {
+class SchoolClassView : BaseView<SchoolClass> {
+
+    constructor(context: Context) : super(context)
+
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+
+    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
 
     private var classNameView: TextView
     private var classTeacherView: TextView

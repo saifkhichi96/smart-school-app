@@ -55,6 +55,10 @@
               android:parentActivityName=".TeacherDashboardActivity"
               android:screenOrientation="sensorPortrait"/>
 
+    <activity android:name=".SubjectActivity"
+              android:label="Subjects"
+              android:screenOrientation="sensorPortrait"/>
+
     <activity android:name=".SchoolDashboardActivity"
               android:screenOrientation="sensorPortrait"/>
 

@@ -10,8 +10,13 @@ import co.aspirasoft.view.BaseView
 import com.cygnus.R
 import com.cygnus.model.Subject
 
-class SubjectView(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-    : BaseView<Subject>(context, attrs, defStyleAttr) {
+class SubjectView : BaseView<Subject> {
+
+    constructor(context: Context) : super(context)
+
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+
+    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
 
     private val subjectColor: View
     private val subjectName: TextView

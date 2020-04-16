@@ -1,7 +1,10 @@
 package com.cygnus
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardActivity
 import com.cygnus.dao.SubjectsDao
@@ -58,7 +61,7 @@ class StudentDashboardActivity : DashboardActivity() {
      * Gets a list of courses from database taught by [currentTeacher].
      */
     private fun getSubjectsList() {
-        SubjectsDao.getSubjectsInClass(schoolId, currentStudent.classId, OnSuccessListener {
+        SubjectsDao.getSubjectsByClass(schoolId, currentStudent.classId, OnSuccessListener {
             onSubjectsReceived(it)
         })
     }
@@ -67,7 +70,20 @@ class StudentDashboardActivity : DashboardActivity() {
         coursesList.adapter = SubjectAdapter(this, subjects)
     }
 
-    class SubjectAdapter(context: Context, subjects: List<Subject>)
-        : ModelViewAdapter<Subject>(context, subjects, SubjectView::class)
+    private inner class SubjectAdapter(context: Context, val subjects: List<Subject>)
+        : ModelViewAdapter<Subject>(context, subjects, SubjectView::class) {
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val v = super.getView(position, convertView, parent)
+            v.setOnClickListener {
+                val subject = subjects[position]
+                startSecurely(SubjectActivity::class.java, Intent().apply {
+                    putExtra(CygnusApp.EXTRA_SCHOOL_SUBJECT, subject)
+                })
+            }
+            return v
+        }
+
+    }
 
 }

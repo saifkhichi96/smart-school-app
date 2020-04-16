@@ -12,8 +12,13 @@ import com.cygnus.R
 import com.cygnus.model.Teacher
 import com.google.android.material.card.MaterialCardView
 
-class TeacherView(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-    : BaseView<Teacher>(context, attrs, defStyleAttr) {
+class TeacherView : BaseView<Teacher> {
+
+    constructor(context: Context) : super(context)
+
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+
+    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
 
     private val defaultElevation: Float
 

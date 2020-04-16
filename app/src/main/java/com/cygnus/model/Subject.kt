@@ -1,7 +1,8 @@
 package com.cygnus.model
 
 import co.aspirasoft.model.BaseModel
-import java.sql.Timestamp
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Subject is a course of study.
@@ -23,7 +24,7 @@ class Subject(name: String, teacherId: String, classId: String) : BaseModel() {
     // no-arg constructor required for Firebase
     constructor() : this("", "", "")
 
-    var appointments = ArrayList<Appointment>()
+    var appointments = ArrayList<Lecture>()
         private set
 
     var name = name
@@ -44,8 +45,10 @@ class Subject(name: String, teacherId: String, classId: String) : BaseModel() {
             setChanged()
         }
 
-    fun addAppointment(dayOfWeek: Int, startTime: Timestamp, endTime: Timestamp, location: String) {
-        appointments.add(Appointment(dayOfWeek, startTime, endTime, location))
+    fun addAppointment(dayOfWeek: Int, startTime: Date, endTime: Date) {
+        appointments.add(Lecture(dayOfWeek, startTime, endTime))
+        appointments.sortBy { it.startTime }
+        appointments.sortBy { it.dayOfWeek }
         setChanged()
     }
 

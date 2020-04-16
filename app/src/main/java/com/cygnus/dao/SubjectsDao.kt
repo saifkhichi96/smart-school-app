@@ -62,7 +62,7 @@ object SubjectsDao {
      * @param classId The id of the school class
      * @param listener A listener for receiving response of the request.
      */
-    fun getSubjectsInClass(schoolId: String, classId: String, listener: OnSuccessListener<List<Subject>>) {
+    fun getSubjectsByClass(schoolId: String, classId: String, listener: OnSuccessListener<List<Subject>>) {
         CygnusApp.refToSubjects(schoolId, classId)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {

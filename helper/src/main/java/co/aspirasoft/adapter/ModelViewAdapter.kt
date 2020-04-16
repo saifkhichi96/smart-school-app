@@ -19,14 +19,14 @@ open class ModelViewAdapter<T : BaseModel>(
         var view = convertView
 
         if (view == null) {
-            view = viewClass.constructors.elementAt(0).call(context, null, 0).apply {
-                this.bindWithModel(model)
-            }
+            view = viewClass.constructors.elementAt(0).call(context)
             view.tag = view
         } else {
             view = view.tag as View
         }
 
+        model.deleteObservers()
+        (view as BaseView<T>).bindWithModel(model)
         model.notifyObservers()
         return view
     }
