@@ -12,16 +12,14 @@ import co.aspirasoft.util.InputUtils.isNotBlank
 import co.aspirasoft.util.InputUtils.showError
 import com.cygnus.core.DashboardActivity
 import com.cygnus.dao.Invite
+import com.cygnus.dao.InvitesDao
 import com.cygnus.model.School
 import com.cygnus.model.User
 import com.cygnus.tasks.InvitationTask
 import com.cygnus.view.EmailsInputDialog
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.GenericTypeIndicator
-import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_school.*
 
 /**
@@ -227,44 +225,24 @@ class SchoolDashboardActivity : DashboardActivity() {
      * and pending invites in realtime.
      */
     private fun trackSentInvites() {
-        CygnusApp.refToInvites(currentUser.id)
-                .addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val t = object : GenericTypeIndicator<HashMap<String, String>>() {}
-                        snapshot.getValue(t)?.let { invites ->
-                            val invitedStaff = ArrayList<Invite>()
-                            val joinedStaff = ArrayList<Invite>()
-                            invites.forEach {
-                                val invite = Invite(
-                                        it.key,
-                                        it.value.split(":")[0],
-                                        it.value.split(":")[1]
-                                )
-
-                                when (invite.status) {
-                                    getString(R.string.status_invite_pending) -> invitedStaff.add(invite)
-                                    getString(R.string.status_invite_accepted) -> joinedStaff.add(invite)
-                                }
-                            }
-
-                            this@SchoolDashboardActivity.invitedStaff.apply {
-                                clear()
-                                addAll(invitedStaff)
-                            }
-
-                            this@SchoolDashboardActivity.joinedStaff.apply {
-                                clear()
-                                addAll(joinedStaff)
-                            }
-                        }
-
-                        showStaffStats(invitedStaff.size, joinedStaff.size)
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-
-                    }
+        InvitesDao.getAll(currentUser.id, OnSuccessListener {
+            val invites = it.orEmpty()
+            invitedStaff.apply {
+                this.clear()
+                this.addAll(invites.takeWhile { invite ->
+                    invite.status == getString(R.string.status_invite_pending)
                 })
+            }
+
+            joinedStaff.apply {
+                this.clear()
+                this.addAll(invites.takeWhile { invite ->
+                    invite.status == getString(R.string.status_invite_accepted)
+                })
+            }
+
+            showStaffStats(invitedStaff.size, joinedStaff.size)
+        })
     }
 
 }

@@ -4,13 +4,13 @@ import android.content.Context
 import android.os.Bundle
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardActivity
+import com.cygnus.dao.SubjectsDao
 import com.cygnus.model.Student
 import com.cygnus.model.Subject
 import com.cygnus.model.User
 import com.cygnus.view.SubjectView
-import com.google.firebase.database.*
+import com.google.android.gms.tasks.OnSuccessListener
 import kotlinx.android.synthetic.main.activity_dashboard_student.*
-import java.util.*
 
 /**
  * StudentDashboardActivity is the students' homepage.
@@ -58,18 +58,9 @@ class StudentDashboardActivity : DashboardActivity() {
      * Gets a list of courses from database taught by [currentTeacher].
      */
     private fun getSubjectsList() {
-        FirebaseDatabase.getInstance()
-                .getReference("$schoolId/classes/${currentStudent.classId}/subjects/")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val t = object : GenericTypeIndicator<HashMap<String, Subject>>() {}
-                        snapshot.getValue(t)?.values?.let { onSubjectsReceived(it.toList()) }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-
-                    }
-                })
+        SubjectsDao.getSubjectsInClass(schoolId, currentStudent.classId, OnSuccessListener {
+            onSubjectsReceived(it)
+        })
     }
 
     private fun onSubjectsReceived(subjects: List<Subject>) {

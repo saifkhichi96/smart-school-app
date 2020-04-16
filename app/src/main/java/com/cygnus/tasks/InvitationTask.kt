@@ -4,7 +4,7 @@ import android.content.Context
 import co.aspirasoft.tasks.DummyTask
 import co.aspirasoft.tasks.FirebaseTask
 import com.cygnus.CygnusApp
-import com.cygnus.R
+import com.cygnus.dao.InvitesDao
 import com.cygnus.utils.DynamicLinksUtils
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -26,18 +26,6 @@ class InvitationTask(
         private val classId: String? = null,
         private val rollNo: String? = null
 ) : FirebaseTask() {
-
-    /**
-     * Location of invitations in Firebase database.
-     */
-    private val invitesRef = CygnusApp.refToInvites(referral)
-
-    /**
-     * State of the new invitation.
-     *
-     * All new invitations are in `Pending` state.
-     */
-    private val state = context.getString(R.string.status_invite_pending)
 
     private val isTeacherInvite: Boolean get() = rollNo == null || classId == null
 
@@ -63,7 +51,7 @@ class InvitationTask(
      * Requests list of existing users.
      */
     override fun init(): Query {
-        return invitesRef.orderByValue()
+        return CygnusApp.refToInvites(referral).orderByValue()
     }
 
     /**
@@ -75,7 +63,7 @@ class InvitationTask(
                     isTeacherInvite -> DynamicLinksUtils.createSignUpActionForTeacher(referral)
                     else -> DynamicLinksUtils.createSignUpActionForStudent(referral, rollNo!!, classId!!)
                 }).addOnSuccessListener {
-                    invitesRef.push().setValue("$inviteeEmail:$state")
+                    InvitesDao.add(referral, inviteeEmail)
                 }
 
         return DummyTask(null)

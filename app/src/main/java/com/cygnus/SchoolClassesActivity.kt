@@ -6,12 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardChildActivity
+import com.cygnus.dao.ClassesDao
 import com.cygnus.dao.Invite
 import com.cygnus.model.SchoolClass
 import com.cygnus.model.User
 import com.cygnus.view.AddClassDialog
 import com.cygnus.view.SchoolClassView
-import com.google.firebase.database.*
+import com.google.android.gms.tasks.OnSuccessListener
 import kotlinx.android.synthetic.main.activity_list.*
 
 class SchoolClassesActivity : DashboardChildActivity() {
@@ -40,22 +41,13 @@ class SchoolClassesActivity : DashboardChildActivity() {
     }
 
     override fun updateUI(currentUser: User) {
-        FirebaseDatabase.getInstance()
-                .getReference("${currentUser.id}/classes/")
-                .addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val t = object : GenericTypeIndicator<HashMap<String, SchoolClass>>() {}
-                        snapshot.getValue(t)?.values?.let {
-                            classes.clear()
-                            classes.addAll(it)
-                            adapter.notifyDataSetChanged()
-                        }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-
-                    }
-                })
+        ClassesDao.getClassesAtSchool(schoolId, OnSuccessListener {
+            it?.let {
+                classes.clear()
+                classes.addAll(it)
+                adapter.notifyDataSetChanged()
+            }
+        })
     }
 
     private fun onAddClassClicked() {

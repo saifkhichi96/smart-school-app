@@ -10,12 +10,13 @@ import android.widget.Button
 import android.widget.Toast
 import co.aspirasoft.util.InputUtils.isNotBlank
 import com.cygnus.R
+import com.cygnus.dao.ClassesDao
 import com.cygnus.model.SchoolClass
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.google.firebase.database.FirebaseDatabase
 
 class AddClassDialog : BottomSheetDialogFragment() {
 
@@ -106,21 +107,14 @@ class AddClassDialog : BottomSheetDialogFragment() {
 
             if (teachers.contains(classTeacher) || skipTeacherAssignment.isChecked) {
                 val schoolClass = SchoolClass(className, classTeacher)
-                FirebaseDatabase.getInstance()
-                        .getReference("$schoolId/classes/")
-                        .child(schoolClass.name)
-                        .setValue(schoolClass)
-                        .addOnSuccessListener {
-                            dismiss()
-                        }
-                        .addOnFailureListener {
-                            classTeacherWrapper.isErrorEnabled = true
-                            classTeacherWrapper.error = it.message
-                            isCancelable = true
-                            okButton.isEnabled = true
-                        }
-
-                dismiss()
+                ClassesDao.add(schoolId, schoolClass, OnCompleteListener {
+                    if (it.isSuccessful) dismiss() else {
+                        classTeacherWrapper.isErrorEnabled = true
+                        classTeacherWrapper.error = it.exception?.message
+                        isCancelable = true
+                        okButton.isEnabled = true
+                    }
+                })
             } else {
                 classTeacherWrapper.isErrorEnabled = true
                 classTeacherWrapper.error = "Select a valid teacher from the list."

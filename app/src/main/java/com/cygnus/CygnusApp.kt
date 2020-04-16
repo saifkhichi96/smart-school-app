@@ -15,10 +15,18 @@ class CygnusApp : Application() {
         super.onCreate()
 
         // Enabling persistence speeds up app by caching data locally
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        db.setPersistenceEnabled(true)
+
+        STATUS_INVITE_PENDING = getString(R.string.status_invite_pending)
+        STATUS_INVITE_ACCEPTED = getString(R.string.status_invite_accepted)
     }
 
     companion object {
+        // the STATUS_* strings are used to represent status of
+        // different tasks
+        lateinit var STATUS_INVITE_PENDING: String private set
+        lateinit var STATUS_INVITE_ACCEPTED: String private set
+
         // the EXTRA_* strings are used as tags to pass
         // data between activities using Intents
         const val EXTRA_ACCOUNT_TYPE = "account_type"
@@ -42,7 +50,12 @@ class CygnusApp : Application() {
         // the refTo* functions return a reference to resources
         // in the Firebase database
         private val db get() = FirebaseDatabase.getInstance()
-        fun refToInvites(schoolId: String) = db.getReference("${schoolId}/invites/")
+        fun refToSchoolId(userId: String) = db.getReference("user_schools/$userId/")
+        fun refToSchoolName(schoolId: String) = db.getReference("$schoolId/name/")
+        fun refToInvites(schoolId: String) = db.getReference("$schoolId/invites/")
+        fun refToUsers(schoolId: String) = db.getReference("$schoolId/users/")
+        fun refToClasses(schoolId: String) = db.getReference("$schoolId/classes/")
+        fun refToSubjects(schoolId: String, classId: String) = db.getReference("$schoolId/classes/$classId/subjects/")
     }
 
 }

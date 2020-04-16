@@ -10,11 +10,12 @@ import com.cygnus.R
 import com.cygnus.SignInActivity
 import com.cygnus.dao.Invite
 import com.cygnus.dao.InvitesDao
+import com.cygnus.dao.UsersDao
 import com.cygnus.model.*
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import kotlin.reflect.KClass
 
@@ -126,24 +127,24 @@ class SignUpActivity : AppCompatActivity() {
         val rollNumber = rollNumber ?: ""
 
         // Account credentials
-        val password = data[R.id.passwordField].toString()
+        val password = data[R.id.passwordField, ""].toString()
 
         // Personal info
-        val imageUri = data[R.id.userImage].toString() // TODO: Upload image to FirebaseStorage
-        val name = data[R.id.nameField].toString()
-        val dateOfBirth = data[R.id.dateOfBirthField].toString()
-        val gender = data[R.id.genderField].toString()
+        val imageUri = data[R.id.userImage, ""].toString() // TODO: Upload image to FirebaseStorage
+        val name = data[R.id.nameField, ""].toString()
+        val dateOfBirth = data[R.id.dateOfBirthField, ""].toString()
+        val gender = data[R.id.genderField, ""].toString()
 
         // Contact info
-        val email = data[R.id.emailField].toString()
-        val address = data[R.id.streetField].toString()
-        val phone = data[R.id.phoneField].toString()
+        val email = data[R.id.emailField, ""].toString()
+        val address = data[R.id.streetField, ""].toString()
+        val phone = data[R.id.phoneField, ""].toString()
 
         // Emergency info
-        val bloodType = data[R.id.bloodTypeField].toString()
-        val emergencyContact = data[R.id.emergencyContactNameField].toString()
-        val emergencyEmail = data[R.id.emergencyContactEmailField].toString()
-        val emergencyPhone = data[R.id.emergencyContactPhoneField].toString()
+        val bloodType = data[R.id.bloodTypeField, ""].toString()
+        val emergencyContact = data[R.id.emergencyContactNameField, ""].toString()
+        val emergencyEmail = data[R.id.emergencyContactEmailField, ""].toString()
+        val emergencyPhone = data[R.id.emergencyContactPhoneField, ""].toString()
 
         when {
             isStudentSignUp -> Student().apply {
@@ -178,7 +179,7 @@ class SignUpActivity : AppCompatActivity() {
      * and has a `Pending` state.
      */
     private fun onUserCreated(user: User, password: String) {
-        InvitesDao.checkInviteStatus(
+        InvitesDao.get(
                 referralCode,
                 user.email,
                 OnSuccessListener {
@@ -199,34 +200,29 @@ class SignUpActivity : AppCompatActivity() {
      */
     private fun onVerificationSuccess(user: User, password: String) {
         val auth = FirebaseAuth.getInstance()
-        val db = FirebaseDatabase.getInstance()
         if (auth.isSignInWithEmailLink(emailLink)) {
             auth.signInWithEmailLink(user.email, emailLink)
                     .addOnSuccessListener { result ->
                         result.user?.let { firebaseUser ->
                             user.id = firebaseUser.uid
-                            db.reference.updateChildren(mapOf(
-                                    "$referralCode/users/${user.id}/" to user,  // user details
-                                    "user_schools/${user.id}/" to referralCode, // link to user's school
-                                    "$referralCode/invites/${invite!!.id}/"     // mark invite as `Accepted`
-                                            to "${user.email}:${getString(R.string.status_invite_accepted)}}"
-                            )).addOnSuccessListener {
-                                firebaseUser.updatePassword(password)
-                                        .addOnSuccessListener {
-                                            startActivity(Intent(this, SignInActivity::class.java).apply {
-                                                putExtra(CygnusApp.EXTRA_NEW_SIGN_UP, true)
-                                            })
-                                            finish()
-                                        }
-                            }.addOnFailureListener { ex ->
-                                onFailure(ex.message ?: getString(R.string.error_sign_up_failed))
-                                result.credential?.let { credential ->
-                                    firebaseUser.reauthenticate(credential)
-                                            .addOnCompleteListener {
-                                                firebaseUser.delete()
-                                            }
+                            UsersDao.add(referralCode, user, invite!!, OnCompleteListener {
+                                if (it.isSuccessful) {
+                                    firebaseUser.updatePassword(password).addOnSuccessListener {
+                                        startActivity(Intent(this, SignInActivity::class.java).apply {
+                                            putExtra(CygnusApp.EXTRA_NEW_SIGN_UP, true)
+                                        })
+                                        finish()
+                                    }
+                                } else {
+                                    onFailure(it.exception?.message ?: getString(R.string.error_sign_up_failed))
+                                    result.credential?.let { credential ->
+                                        firebaseUser.reauthenticate(credential)
+                                                .addOnCompleteListener {
+                                                    firebaseUser.delete()
+                                                }
+                                    }
                                 }
-                            }
+                            })
                         }
                     }
                     .addOnFailureListener { ex ->

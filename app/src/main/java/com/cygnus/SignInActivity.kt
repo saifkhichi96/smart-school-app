@@ -6,14 +6,16 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import co.aspirasoft.util.InputUtils.isNotBlank
-import com.cygnus.model.*
+import com.cygnus.dao.SchoolDao
+import com.cygnus.dao.UsersDao
+import com.cygnus.model.Credentials
+import com.cygnus.model.School
+import com.cygnus.model.Teacher
+import com.cygnus.model.User
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_sign_in.*
 
 /**
@@ -35,7 +37,7 @@ class SignInActivity : AppCompatActivity() {
 
         // Show a welcome message if this is a new user
         if (intent.getBooleanExtra(CygnusApp.EXTRA_NEW_SIGN_UP, false)) {
-            FirebaseAuth.getInstance().signOut()
+            auth.signOut()
             Snackbar.make(
                     signInButton,
                     "Congratulations! Use your email/password to sign into your new account now.",
@@ -92,44 +94,27 @@ class SignInActivity : AppCompatActivity() {
      * details from Firebase database to complete the sign-in process.
      */
     private fun onAuthSuccess(firebaseUser: FirebaseUser) {
-        val db = FirebaseDatabase.getInstance()
-        db.getReference("${firebaseUser.uid}/name/")
-                .addListenerForSingleValueEvent(object : SignInEventListener() {
-                    override fun onDataReceived(snapshot: DataSnapshot) {
-                        when {
-                            // when a `School` signs in
-                            snapshot.exists() -> onSignedInAsSchool(snapshot.value.toString(), firebaseUser)
+        SchoolDao.getSchoolName(firebaseUser.uid, OnSuccessListener { school ->
+            // when a `School` signs in
+            if (school != null) onSignedInAsSchool(school, firebaseUser)
 
-                            // when a regular user signs in, we first need to find out which school
-                            // they are associated with by retrieving their school's id
-                            else -> db.getReference("user_schools/${firebaseUser.uid}")
-                                    .addListenerForSingleValueEvent(object : SignInEventListener() {
-                                        override fun onDataReceived(snapshot: DataSnapshot) {
-                                            snapshot.getValue(String::class.java)?.let { schoolId ->
-                                                onSchoolDetailsReceived(schoolId, firebaseUser)
-                                            }
-                                        }
-                                    })
-                        }
-                    }
-                })
+            // when a regular user signs in, we first need to find out which school
+            // they are associated with by retrieving their school's id
+            else SchoolDao.getSchoolByUser(firebaseUser.uid, OnSuccessListener {
+                it?.let { schoolId ->
+                    onSchoolDetailsReceived(schoolId, firebaseUser)
+                } ?: onFailure(null)
+            })
+        })
     }
 
     /**
      * Callback for when details of [firebaseUser]'s school are received.
      */
     private fun onSchoolDetailsReceived(schoolId: String, firebaseUser: FirebaseUser) {
-        FirebaseDatabase.getInstance()
-                .getReference("$schoolId/users/${firebaseUser.uid}/")
-                .addListenerForSingleValueEvent(object : SignInEventListener() {
-                    override fun onDataReceived(snapshot: DataSnapshot) {
-                        snapshot.getValue(when ((snapshot.value as HashMap<*, *>)["type"]) {
-                            Student::class.simpleName -> Student::class.java
-                            Teacher::class.simpleName -> Teacher::class.java
-                            else -> School::class.java
-                        })?.let { user -> onSignedIn(user, schoolId) }
-                    }
-                })
+        UsersDao.getUserById(schoolId, firebaseUser.uid, OnSuccessListener {
+            it?.let { user -> onSignedIn(user, schoolId) }
+        })
     }
 
     /**
@@ -176,22 +161,6 @@ class SignInActivity : AppCompatActivity() {
     private fun onFailure(ex: Exception?) {
         Toast.makeText(this, ex?.message ?: "Sign in failed", Toast.LENGTH_LONG).show()
         auth.signOut()
-    }
-
-    private abstract inner class SignInEventListener : ValueEventListener {
-        abstract fun onDataReceived(snapshot: DataSnapshot)
-
-        override fun onDataChange(snapshot: DataSnapshot) {
-            try {
-                onDataReceived(snapshot)
-            } catch (ex: Exception) {
-                onFailure(ex)
-            }
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            onFailure(error.toException())
-        }
     }
 
 }

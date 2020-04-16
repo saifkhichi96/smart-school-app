@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.view.View
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardActivity
-import com.cygnus.model.*
+import com.cygnus.dao.SubjectsDao
+import com.cygnus.dao.UsersDao
+import com.cygnus.model.Subject
+import com.cygnus.model.Teacher
+import com.cygnus.model.User
 import com.cygnus.view.SubjectView
-import com.google.firebase.database.*
+import com.google.android.gms.tasks.OnSuccessListener
 import kotlinx.android.synthetic.main.activity_dashboard_teacher.*
-import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * TeacherDashboardActivity is the teachers' homepage.
@@ -63,24 +65,11 @@ class TeacherDashboardActivity : DashboardActivity() {
 
     private fun getStudentCount() {
         onStudentCountReceived(0)
-        FirebaseDatabase.getInstance()
-                .getReference("$schoolId/users/")
-                .orderByChild("classId")
-                .equalTo(currentTeacher.classId)
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val t = object : GenericTypeIndicator<HashMap<String, Student>>() {}
-                        var count = 0
-                        snapshot.getValue(t)?.forEach { entry ->
-                            if (entry.value.rollNo.isNotBlank()) count++
-                        }
-                        onStudentCountReceived(count)
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-
-                    }
-                })
+        currentTeacher.classId?.let { classId ->
+            UsersDao.getStudentsInClass(schoolId, classId, OnSuccessListener {
+                onStudentCountReceived(it.size)
+            })
+        }
     }
 
     private fun onStudentCountReceived(count: Int) {
@@ -91,28 +80,9 @@ class TeacherDashboardActivity : DashboardActivity() {
      * Gets a list of courses from database taught by [currentTeacher].
      */
     private fun getSubjectsList() {
-        FirebaseDatabase.getInstance()
-                .getReference("$schoolId/classes/")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val t = object : GenericTypeIndicator<HashMap<String, SchoolClass>>() {}
-                        val subjects = ArrayList<Subject>()
-                        snapshot.getValue(t)?.values?.forEach { schoolClass ->
-                            schoolClass.subjects?.let {
-                                it.values.forEach { subject ->
-                                    if (subject.teacherId == currentTeacher.email) {
-                                        subjects += subject
-                                    }
-                                }
-                            }
-                        }
-                        onSubjectsReceived(subjects)
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-
-                    }
-                })
+        SubjectsDao.getSubjectsByTeacher(schoolId, currentTeacher.email, OnSuccessListener {
+            onSubjectsReceived(it)
+        })
     }
 
     private fun onSubjectsReceived(subjects: List<Subject>) {

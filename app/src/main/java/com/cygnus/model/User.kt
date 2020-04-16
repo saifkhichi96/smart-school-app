@@ -163,4 +163,16 @@ class Teacher(id: String, name: String, credentials: Credentials) : User(id, nam
         setChanged()
     }
 
+    fun updateWith(teacher: Teacher) {
+        this.id = teacher.id
+        this.name = teacher.name
+        this.credentials = teacher.credentials
+        this.address = teacher.address
+        this.phone = teacher.phone
+        this.bloodType = teacher.bloodType
+        this.gender = teacher.gender
+        this.classId = teacher.classId
+        this.subjects = teacher.subjects
+    }
+
 }

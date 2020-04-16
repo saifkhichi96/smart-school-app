@@ -10,12 +10,13 @@ import android.widget.Button
 import android.widget.Toast
 import co.aspirasoft.util.InputUtils.isNotBlank
 import com.cygnus.R
+import com.cygnus.dao.SubjectsDao
 import com.cygnus.model.Subject
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.google.firebase.database.FirebaseDatabase
 
 class AddSubjectDialog : BottomSheetDialogFragment() {
 
@@ -136,21 +137,14 @@ class AddSubjectDialog : BottomSheetDialogFragment() {
 
             if (teachers.contains(subjectTeacher) || skipTeacherAssignment.isChecked) {
                 val subject = Subject(subjectName, subjectTeacher, subjectClass)
-                FirebaseDatabase.getInstance()
-                        .getReference("$schoolId/classes/$subjectClass/subjects/")
-                        .child(subject.name)
-                        .setValue(subject)
-                        .addOnSuccessListener {
-                            dismiss()
-                        }
-                        .addOnFailureListener {
-                            subjectTeacherWrapper.isErrorEnabled = true
-                            subjectTeacherWrapper.error = it.message
-                            isCancelable = true
-                            okButton.isEnabled = true
-                        }
-
-                dismiss()
+                SubjectsDao.add(schoolId, subject, OnCompleteListener {
+                    if (it.isSuccessful) dismiss() else {
+                        subjectTeacherWrapper.isErrorEnabled = true
+                        subjectTeacherWrapper.error = it.exception?.message
+                        isCancelable = true
+                        okButton.isEnabled = true
+                    }
+                })
             } else {
                 subjectTeacherWrapper.isErrorEnabled = true
                 subjectTeacherWrapper.error = "Select a valid teacher from the list."

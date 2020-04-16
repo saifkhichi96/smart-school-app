@@ -6,12 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardChildActivity
+import com.cygnus.dao.UsersDao
 import com.cygnus.model.Student
 import com.cygnus.model.Teacher
 import com.cygnus.model.User
 import com.cygnus.view.AddStudentDialog
 import com.cygnus.view.StudentView
-import com.google.firebase.database.*
+import com.google.android.gms.tasks.OnSuccessListener
 import kotlinx.android.synthetic.main.activity_list.*
 
 class StudentsActivity : DashboardChildActivity() {
@@ -48,26 +49,13 @@ class StudentsActivity : DashboardChildActivity() {
     }
 
     override fun updateUI(currentUser: User) {
-        FirebaseDatabase.getInstance()
-                .getReference("$schoolId/users/")
-                .orderByChild("classId")
-                .equalTo(currentTeacher.classId)
-                .addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val t = object : GenericTypeIndicator<HashMap<String, Student>>() {}
-                        students.clear()
-                        snapshot.getValue(t)?.forEach { entry ->
-                            if (entry.value.rollNo.isNotBlank()) {
-                                students.add(entry.value)
-                            }
-                        }
-                        adapter.notifyDataSetChanged()
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-
-                    }
-                })
+        currentTeacher.classId?.let { classId ->
+            UsersDao.getStudentsInClass(schoolId, classId, OnSuccessListener {
+                students.clear()
+                students.addAll(it)
+                adapter.notifyDataSetChanged()
+            })
+        }
     }
 
     private fun onAddStudentClicked() {

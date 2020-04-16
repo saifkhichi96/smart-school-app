@@ -8,12 +8,14 @@ import android.widget.Button
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardChildActivity
 import com.cygnus.dao.Invite
+import com.cygnus.dao.InvitesDao
+import com.cygnus.dao.UsersDao
 import com.cygnus.model.Credentials
 import com.cygnus.model.Teacher
 import com.cygnus.model.User
 import com.cygnus.view.TeacherView
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_list.*
 
 /**
@@ -70,29 +72,12 @@ class SchoolTeachersActivity : DashboardChildActivity() {
         for (invite in invites) {
             val teacher = Teacher("", "", Credentials(invite.invitee, ""))
             if (status == getString(R.string.status_invite_accepted)) {
-                FirebaseDatabase.getInstance()
-                        .getReference("${currentUser.id}/users/")
-                        .orderByChild("email")
-                        .equalTo(invite.invitee)
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(snapshot: DataSnapshot) {
-                                val t = object : GenericTypeIndicator<HashMap<String, Teacher>>() {}
-                                snapshot.getValue(t)?.values?.elementAt(0)?.let {
-                                    teacher.id = it.id
-                                    teacher.name = it.name
-                                    teacher.phone = it.phone
-                                    teacher.address = it.address
-                                    teacher.credentials = it.credentials
-                                    teacher.classId = it.classId
-                                    teacher.notifyObservers()
-                                }
-
-                            }
-
-                            override fun onCancelled(error: DatabaseError) {
-
-                            }
-                        })
+                UsersDao.getUserByEmail(currentUser.id, invite.invitee, OnSuccessListener {
+                    if (it != null && it is Teacher) {
+                        teacher.updateWith(it)
+                        teacher.notifyObservers()
+                    }
+                })
             }
 
             teachers.add(teacher)
@@ -114,14 +99,11 @@ class SchoolTeachersActivity : DashboardChildActivity() {
                     if (invite.invitee == email) {
                         Snackbar.make(contentList, "Revoke invite to $email?", Snackbar.LENGTH_INDEFINITE)
                                 .setAction(getString(R.string.label_revoke)) {
-                                    CygnusApp.refToInvites(currentUser.id)
-                                            .child(invite.id)
-                                            .removeValue()
-                                            .addOnSuccessListener {
-                                                invites.remove(invite)
-                                                this@SchoolTeachersActivity.teachers.remove(teacher)
-                                                this@SchoolTeachersActivity.adapter?.notifyDataSetChanged()
-                                            }
+                                    InvitesDao.remove(currentUser.id, invite, OnSuccessListener {
+                                        invites.remove(invite)
+                                        this@SchoolTeachersActivity.teachers.remove(teacher)
+                                        this@SchoolTeachersActivity.adapter?.notifyDataSetChanged()
+                                    })
                                 }
                                 .show()
                         break

@@ -7,12 +7,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardChildActivity
+import com.cygnus.dao.ClassesDao
 import com.cygnus.dao.Invite
 import com.cygnus.model.Subject
 import com.cygnus.model.User
 import com.cygnus.view.AddSubjectDialog
 import com.cygnus.view.SubjectView
-import com.google.firebase.database.*
+import com.google.android.gms.tasks.OnSuccessListener
 import kotlinx.android.synthetic.main.activity_list.*
 
 class SchoolSubjectsActivity : DashboardChildActivity() {
@@ -42,37 +43,16 @@ class SchoolSubjectsActivity : DashboardChildActivity() {
     }
 
     override fun updateUI(currentUser: User) {
-        FirebaseDatabase.getInstance()
-                .getReference("${currentUser.id}/classes/")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val t = object : GenericTypeIndicator<HashMap<String, Subject>>() {}
-                        classes.clear()
-                        snapshot.getValue(t)?.values?.forEach {
-                            classes.add(it.name)
-                            FirebaseDatabase.getInstance()
-                                    .getReference("${currentUser.id}/classes/${it.name}/subjects/")
-                                    .addValueEventListener(object : ValueEventListener {
-                                        override fun onDataChange(snapshot: DataSnapshot) {
-                                            val t2 = object : GenericTypeIndicator<HashMap<String, Subject>>() {}
-                                            snapshot.getValue(t2)?.values?.forEach { subject ->
-                                                if (!subjects.contains(subject))
-                                                    subjects.add(subject)
-                                            }
-                                            adapter.notifyDataSetChanged()
-                                        }
-
-                                        override fun onCancelled(error: DatabaseError) {
-
-                                        }
-                                    })
-                        }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-
-                    }
-                })
+        ClassesDao.getClassesAtSchool(schoolId, OnSuccessListener {
+            classes.clear()
+            it?.forEach { schoolClass ->
+                classes.add(schoolClass.name)
+                schoolClass.subjects?.values?.forEach { subject ->
+                    if (!subjects.contains(subject)) subjects.add(subject)
+                }
+            }
+            adapter.notifyDataSetChanged()
+        })
     }
 
     private fun onAddClassClicked() {

@@ -10,15 +10,13 @@ import co.aspirasoft.util.InputUtils.isEmail
 import co.aspirasoft.util.InputUtils.isNotBlank
 import co.aspirasoft.util.InputUtils.showError
 import com.cygnus.R
+import com.cygnus.dao.UsersDao
 import com.cygnus.model.Student
 import com.cygnus.tasks.InvitationTask
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 
 class AddStudentDialog : BottomSheetDialogFragment() {
 
@@ -105,29 +103,13 @@ class AddStudentDialog : BottomSheetDialogFragment() {
                 okButton.isEnabled = false
 
                 // Ensure roll number and email are unique
-                val usersRef = FirebaseDatabase.getInstance().getReference("$schoolId/users/")
-                usersRef.orderByValue()
-                        .equalTo(rollNo, "rollNo")
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(snapshot: DataSnapshot) {
-                                if (snapshot.exists()) rollNumberField.showError(getString(R.string.error_roll_no_exists))
-                                else usersRef.orderByValue().equalTo(email, "email")
-                                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                                            override fun onDataChange(snapshot: DataSnapshot) {
-                                                if (snapshot.exists()) studentEmailField.showError(getString(R.string.error_email_exists))
-                                                else inviteStudent(rollNo, email)
-                                            }
-
-                                            override fun onCancelled(error: DatabaseError) {
-
-                                            }
-                                        })
-                            }
-
-                            override fun onCancelled(error: DatabaseError) {
-
-                            }
-                        })
+                UsersDao.getStudentByRollNumber(schoolId, rollNo, OnSuccessListener { existingStudent ->
+                    if (existingStudent != null) rollNumberField.showError(getString(R.string.error_roll_no_exists))
+                    else UsersDao.getUserByEmail(schoolId, email, OnSuccessListener { existingUser ->
+                        if (existingUser != null) studentEmailField.showError(getString(R.string.error_email_exists))
+                        else inviteStudent(rollNo, email)
+                    })
+                })
             } else {
                 studentEmailField.showError(getString(R.string.error_email_invalid))
             }
