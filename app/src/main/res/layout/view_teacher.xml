@@ -1,88 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/teacherCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardUseCompatPadding="true"
-    app:cardElevation="4dp">
+    android:orientation="vertical"
+    android:padding="@dimen/activity_horizontal_margin">
 
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:padding="8dp">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-      <com.google.android.material.textview.MaterialTextView
-          style="@style/TextAppearance.MaterialComponents.Body1"
-          android:id="@+id/teacherName"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:maxLines="2"
-          android:text="@string/ph_name"
-          android:textStyle="bold"/>
-
-      <com.google.android.material.button.MaterialButton
-          android:id="@+id/revokeInviteButton"
-          style="@style/Widget.MaterialComponents.Button.TextButton"
-          android:layout_width="match_parent"
-          android:layout_height="32dp"
-          android:gravity="center_vertical|end"
-          android:padding="0dp"
-          android:text="@string/label_revoke"
-          app:rippleColor="@android:color/transparent"/>
-
-    </LinearLayout>
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
 
     <com.google.android.material.textview.MaterialTextView
-        style="@style/TextAppearance.MaterialComponents.Body2"
-        android:id="@+id/teacherEmail"
+        style="@style/TextAppearance.MaterialComponents.Body1"
+        android:id="@+id/teacherName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:text="@string/ph_email"/>
+        android:maxLines="2"
+        android:text="@string/ph_name"
+        android:textStyle="bold"/>
 
     <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-        android:id="@+id/teacherAddress"
-        android:layout_width="wrap_content"
+        android:id="@+id/revokeInviteButton"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
         android:layout_height="32dp"
-        android:layout_margin="0dp"
-        android:clickable="false"
+        android:gravity="center_vertical|end"
         android:padding="0dp"
-        android:text="@string/ph_address"
-        android:textAllCaps="false"
-        android:textColor="?android:attr/textColorPrimary"
-        android:maxLines="1"
-        app:icon="@drawable/ic_address"
-        app:iconSize="18dp"
-        app:iconPadding="4dp"
-        app:iconTint="?android:attr/textColorPrimary"/>
-
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-        android:id="@+id/teacherPhone"
-        android:layout_width="wrap_content"
-        android:layout_height="32dp"
-        android:layout_margin="0dp"
-        android:clickable="false"
-        android:padding="0dp"
-        android:text="@string/ph_phone"
-        android:textAllCaps="false"
-        android:textColor="?android:attr/textColorPrimary"
-        android:maxLines="1"
-        app:icon="@drawable/ic_phone"
-        app:iconSize="18dp"
-        app:iconPadding="4dp"
-        app:iconTint="?android:attr/textColorPrimary"/>
+        android:text="@string/label_revoke"
+        app:rippleColor="@android:color/transparent"/>
 
   </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+  <com.google.android.material.textview.MaterialTextView
+      style="@style/TextAppearance.MaterialComponents.Body2"
+      android:id="@+id/teacherEmail"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:maxLines="1"
+      android:autoLink="email"
+      android:textColorLink="?android:attr/textColorPrimary"
+      android:text="@string/ph_email"/>
+
+  <com.google.android.material.button.MaterialButton
+      style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+      android:id="@+id/teacherPhone"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:paddingBottom="0dp"
+      android:textAllCaps="false"
+      android:textColor="?android:attr/textColorPrimary"
+      android:text="@string/ph_phone"
+      app:icon="@drawable/ic_phone"
+      app:iconSize="18dp"
+      app:iconPadding="4dp"
+      app:iconTint="?android:attr/textColorPrimary"/>
+
+  <com.google.android.material.button.MaterialButton
+      style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+      android:id="@+id/teacherAddress"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:clickable="false"
+      android:paddingTop="0dp"
+      android:text="@string/ph_address"
+      android:textAllCaps="false"
+      android:textColor="?android:attr/textColorPrimary"
+      app:icon="@drawable/ic_address"
+      app:iconSize="18dp"
+      app:iconPadding="4dp"
+      app:iconTint="?android:attr/textColorPrimary"/>
+
+</LinearLayout>

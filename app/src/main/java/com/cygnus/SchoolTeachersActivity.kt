@@ -59,7 +59,6 @@ class SchoolTeachersActivity : DashboardChildActivity() {
         this.invites = invites
 
         supportActionBar?.title = if (status == getString(R.string.status_invite_accepted)) {
-            contentList.divider = null
             "Current Staff"
         } else {
             "Invited Staff"

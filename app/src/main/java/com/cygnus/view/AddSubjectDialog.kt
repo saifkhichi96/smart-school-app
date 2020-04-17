@@ -36,6 +36,8 @@ class AddSubjectDialog : BottomSheetDialogFragment() {
     private lateinit var okButton: Button
     private lateinit var editButton: Button
 
+    var onOkListener: ((subject: Subject) -> Unit)? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.dialog_add_subject, container, false)
 
@@ -116,20 +118,9 @@ class AddSubjectDialog : BottomSheetDialogFragment() {
 
             val subjectName = subjectNameField.text.toString().trim()
             val subjectClass = subjectClassField.text.toString().trim()
-            if (subjectClass.isBlank()) {
-                subjectClassWrapper.isErrorEnabled = true
-                subjectClassWrapper.error = "Select a valid subject from the list."
-                isCancelable = true
-                okButton.isEnabled = true
-                return
-            }
-
             var subjectTeacher = subjectTeacherField.text.toString().trim()
-            if (!skipTeacherAssignment.isChecked && subjectTeacher.isBlank()) {
-                subjectTeacherWrapper.isErrorEnabled = true
-                subjectTeacherWrapper.error = "Select a valid teacher from the list."
-                isCancelable = true
-                okButton.isEnabled = true
+            if (subjectClass.isBlank() || (!skipTeacherAssignment.isChecked && subjectTeacher.isBlank())) {
+                onError()
                 return
             } else if (skipTeacherAssignment.isChecked) {
                 subjectTeacher = ""
@@ -138,20 +129,20 @@ class AddSubjectDialog : BottomSheetDialogFragment() {
             if (teachers.contains(subjectTeacher) || skipTeacherAssignment.isChecked) {
                 val subject = Subject(subjectName, subjectTeacher, subjectClass)
                 SubjectsDao.add(schoolId, subject, OnCompleteListener {
-                    if (it.isSuccessful) dismiss() else {
-                        subjectTeacherWrapper.isErrorEnabled = true
-                        subjectTeacherWrapper.error = it.exception?.message
-                        isCancelable = true
-                        okButton.isEnabled = true
-                    }
+                    if (it.isSuccessful) {
+                        onOkListener?.let { it(subject) }
+                        dismiss()
+                    } else onError(it.exception?.message)
                 })
-            } else {
-                subjectTeacherWrapper.isErrorEnabled = true
-                subjectTeacherWrapper.error = "Select a valid teacher from the list."
-                isCancelable = true
-                okButton.isEnabled = true
-            }
+            } else onError()
         }
+    }
+
+    private fun onError(error: String? = null) {
+        subjectTeacherWrapper.isErrorEnabled = true
+        subjectTeacherWrapper.error = error ?: "Select a valid teacher from the list."
+        isCancelable = true
+        okButton.isEnabled = true
     }
 
     companion object {

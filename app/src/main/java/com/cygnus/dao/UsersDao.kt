@@ -55,6 +55,28 @@ object UsersDao {
         )).addOnCompleteListener(listener)
     }
 
+    fun update(schoolId: String, user: User, listener: OnSuccessListener<Boolean>) {
+        CygnusApp.refToUsers(schoolId)
+                .child(user.id)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.exists()) {
+                            CygnusApp.refToUsers(schoolId)
+                                    .child(user.id)
+                                    .setValue(user)
+                                    .addOnCompleteListener {
+                                        listener.onSuccess(it.isSuccessful)
+                                    }
+                        } else listener.onSuccess(false)
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        listener.onSuccess(false)
+
+                    }
+                })
+    }
+
     /**
      * Retrieves a list of all students in a class.
      *

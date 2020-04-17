@@ -1,5 +1,6 @@
 package com.cygnus.view
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +16,6 @@ import com.cygnus.model.Student
 import com.cygnus.tasks.InvitationTask
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 
 class AddStudentDialog : BottomSheetDialogFragment() {
@@ -31,6 +31,8 @@ class AddStudentDialog : BottomSheetDialogFragment() {
     private lateinit var studentEmailField: TextInputEditText
     private lateinit var okButton: Button
     private lateinit var editButton: Button
+
+    var onDismissListener: ((dialog: DialogInterface) -> Unit)? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.dialog_add_student, container, false)
@@ -59,6 +61,11 @@ class AddStudentDialog : BottomSheetDialogFragment() {
         return v
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onDismissListener?.let { it(dialog) }
+    }
+
     private fun setEditModeEnabled(enabled: Boolean) {
         rollNumberField.isEnabled = enabled
         studentEmailField.isEnabled = enabled
@@ -78,14 +85,12 @@ class AddStudentDialog : BottomSheetDialogFragment() {
                 okButton.isEnabled = true
 
                 if (task.isSuccessful) {
-                    Snackbar.make(
-                            studentEmailField,
+                    Toast.makeText(
+                            studentEmailField.context,
                             getString(R.string.status_invitation_sent),
-                            Snackbar.LENGTH_LONG
+                            Toast.LENGTH_LONG
                     ).show()
-
-                    rollNumberField.setText("")
-                    studentEmailField.setText("")
+                    dismiss()
                 } else {
                     studentEmailField.showError(task.exception?.message
                             ?: getString(R.string.error_invitation_not_sent))
@@ -104,10 +109,16 @@ class AddStudentDialog : BottomSheetDialogFragment() {
 
                 // Ensure roll number and email are unique
                 UsersDao.getStudentByRollNumber(schoolId, rollNo, OnSuccessListener { existingStudent ->
-                    if (existingStudent != null) rollNumberField.showError(getString(R.string.error_roll_no_exists))
-                    else UsersDao.getUserByEmail(schoolId, email, OnSuccessListener { existingUser ->
-                        if (existingUser != null) studentEmailField.showError(getString(R.string.error_email_exists))
-                        else inviteStudent(rollNo, email)
+                    if (existingStudent != null) {
+                        rollNumberField.showError(getString(R.string.error_roll_no_exists))
+                        isCancelable = true
+                        okButton.isEnabled = true
+                    } else UsersDao.getUserByEmail(schoolId, email, OnSuccessListener { existingUser ->
+                        if (existingUser != null) {
+                            studentEmailField.showError(getString(R.string.error_email_exists))
+                            isCancelable = true
+                            okButton.isEnabled = true
+                        } else inviteStudent(rollNo, email)
                     })
                 })
             } else {

@@ -69,13 +69,13 @@ class StudentsActivity : DashboardChildActivity() {
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val v = super.getView(position, convertView, parent)
             v.setOnClickListener {
-                val dialog = AddStudentDialog.newInstance(
+                /* TODO: val dialog = AddStudentDialog.newInstance(
                         currentTeacher.classId!!,
                         currentTeacher.id,
                         schoolId,
                         students[position]
                 )
-                dialog.show(supportFragmentManager, dialog.toString())
+                dialog.show(supportFragmentManager, dialog.toString()) */
             }
             return v
         }

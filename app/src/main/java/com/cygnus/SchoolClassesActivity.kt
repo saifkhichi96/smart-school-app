@@ -32,9 +32,12 @@ class SchoolClassesActivity : DashboardChildActivity() {
             finish()
             return
         }
-        invites.forEach { this.teachers.add(it.invitee) }
+        invites.forEach { teachers.add(it.invitee) }
 
         adapter = SchoolClassAdapter(this, classes)
+        adapter.sort { o1, o2 ->
+            (o1 as SchoolClass).name.compareTo((o2 as SchoolClass).name)
+        }
         contentList.adapter = adapter
 
         addButton.setOnClickListener { onAddClassClicked() }
@@ -45,26 +48,41 @@ class SchoolClassesActivity : DashboardChildActivity() {
             it?.let {
                 classes.clear()
                 classes.addAll(it)
+                classes.sortBy { schoolClass -> schoolClass.name }
                 adapter.notifyDataSetChanged()
             }
         })
     }
 
     private fun onAddClassClicked() {
-        AddClassDialog.newInstance(teachers, currentUser.id).show(
-                supportFragmentManager,
-                "add_class_dialog"
-        )
+        val dialog = AddClassDialog.newInstance(teachers, currentUser.id)
+        dialog.onOkListener = { schoolClass ->
+            if (schoolClass.teacherId.isNotBlank()) {
+                classes.filter { it.teacherId == schoolClass.teacherId }
+                        .forEach { it.teacherId = "" }
+            }
+            classes.add(schoolClass)
+            adapter.notifyDataSetChanged()
+        }
+        dialog.show(supportFragmentManager, dialog.toString())
     }
 
-    private inner class SchoolClassAdapter(context: Context, val classes: List<SchoolClass>)
+    private inner class SchoolClassAdapter(context: Context, val classes: ArrayList<SchoolClass>)
         : ModelViewAdapter<SchoolClass>(context, classes, SchoolClassView::class) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val v = super.getView(position, convertView, parent)
             v.setOnClickListener {
-                AddClassDialog.newInstance(teachers, currentUser.id, classes[position])
-                        .show(supportFragmentManager, "add_class_dialog")
+                val dialog = AddClassDialog.newInstance(teachers, currentUser.id, classes[position])
+                dialog.onOkListener = { schoolClass ->
+                    if (schoolClass.teacherId.isNotBlank()) {
+                        classes.filter { it.teacherId == schoolClass.teacherId }
+                                .forEach { it.teacherId = "" }
+                    }
+                    classes[position] = schoolClass
+                    notifyDataSetChanged()
+                }
+                dialog.show(supportFragmentManager, dialog.toString())
             }
             return v
         }

@@ -45,6 +45,7 @@
   <string name="label_manage_courses">Course\nManagement</string>
   <string name="label_profile">Manage your Cygnus Profile</string>
   <string name="label_revoke">Revoke</string>
+  <string name="label_save">Save</string>
   <string name="label_skip_teacher_assignment">Assign a teacher later.</string>
   <string name="label_staff_invited">%d Pending</string>
   <string name="label_staff_joined">%d Joined</string>
@@ -118,6 +119,8 @@
   <string name="error_email_exists">Email already exists.</string>
   <string name="error_roll_no_exists">Roll number already exists.</string>
   <string name="error_invitation_not_sent">Invitation could not be sent</string>
+  <string name="error_invalid_teacher">Select a valid teacher from the list.</string>
+  <string name="error_unknown">Unknown error.</string>
 
   <!-- Menu Actions -->
   <string name="menu_dashboard">Dashboard</string>

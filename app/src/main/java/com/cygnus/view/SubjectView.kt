@@ -9,6 +9,7 @@ import android.widget.TextView
 import co.aspirasoft.view.BaseView
 import com.cygnus.R
 import com.cygnus.model.Subject
+import kotlinx.android.synthetic.main.view_subject.view.*
 
 class SubjectView : BaseView<Subject> {
 
@@ -31,16 +32,21 @@ class SubjectView : BaseView<Subject> {
 
     override fun updateView(model: Subject) {
         subjectName.text = model.name
-        subjectTeacher.text = model.classId
+        subjectClass.text = model.classId
+        subjectTeacher.text = "Teacher: " + model.teacherId
         try {
-            subjectColor.setBackgroundColor(Color.parseColor(convertToColor(model.name)))
+            subjectColor.setBackgroundColor(Color.parseColor(convertToColor(model)))
         } catch (ignored: Exception) {
 
         }
     }
 
-    private fun convertToColor(s: String): String? {
-        val i = s.hashCode()
+    fun showTeacher() {
+        subjectTeacher.visibility = View.VISIBLE
+    }
+
+    private fun convertToColor(o: Any): String? {
+        val i = o.hashCode()
         return "#FF" + Integer.toHexString(i shr 16 and 0xFF) +
                 Integer.toHexString(i shr 8 and 0xFF) +
                 Integer.toHexString(i and 0xFF)

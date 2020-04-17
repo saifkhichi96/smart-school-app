@@ -13,7 +13,9 @@ import co.aspirasoft.util.InputUtils.showError
 import com.cygnus.core.DashboardActivity
 import com.cygnus.dao.Invite
 import com.cygnus.dao.InvitesDao
+import com.cygnus.dao.UsersDao
 import com.cygnus.model.School
+import com.cygnus.model.Teacher
 import com.cygnus.model.User
 import com.cygnus.tasks.InvitationTask
 import com.cygnus.view.EmailsInputDialog
@@ -226,22 +228,20 @@ class SchoolDashboardActivity : DashboardActivity() {
      */
     private fun trackSentInvites() {
         InvitesDao.getAll(currentUser.id, OnSuccessListener {
-            val invites = it.orEmpty()
-            invitedStaff.apply {
-                this.clear()
-                this.addAll(invites.takeWhile { invite ->
-                    invite.status == getString(R.string.status_invite_pending)
+            invitedStaff.clear()
+            joinedStaff.clear()
+            it.orEmpty().forEach { invite ->
+                UsersDao.getUserByEmail(schoolId, invite.invitee, OnSuccessListener { user ->
+                    if (user != null && user is Teacher) {
+                        when (invite.status) {
+                            CygnusApp.STATUS_INVITE_PENDING -> invitedStaff.add(invite)
+                            else -> joinedStaff.add(invite)
+                        }
+
+                        showStaffStats(invitedStaff.size, joinedStaff.size)
+                    }
                 })
             }
-
-            joinedStaff.apply {
-                this.clear()
-                this.addAll(invites.takeWhile { invite ->
-                    invite.status == getString(R.string.status_invite_accepted)
-                })
-            }
-
-            showStaffStats(invitedStaff.size, joinedStaff.size)
         })
     }
 

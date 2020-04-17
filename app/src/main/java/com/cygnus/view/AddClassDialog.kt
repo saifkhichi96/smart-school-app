@@ -9,14 +9,22 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.Toast
 import co.aspirasoft.util.InputUtils.isNotBlank
+import com.cygnus.CygnusApp
 import com.cygnus.R
 import com.cygnus.dao.ClassesDao
+import com.cygnus.dao.UsersDao
 import com.cygnus.model.SchoolClass
+import com.cygnus.model.Teacher
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.GenericTypeIndicator
+import com.google.firebase.database.ValueEventListener
 
 class AddClassDialog : BottomSheetDialogFragment() {
 
@@ -32,6 +40,8 @@ class AddClassDialog : BottomSheetDialogFragment() {
     private lateinit var skipTeacherAssignment: MaterialCheckBox
     private lateinit var okButton: Button
     private lateinit var editButton: Button
+
+    var onOkListener: ((schoolClass: SchoolClass) -> Unit)? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.dialog_add_class, container, false)
@@ -96,10 +106,7 @@ class AddClassDialog : BottomSheetDialogFragment() {
             val className = classNameField.text.toString().trim()
             var classTeacher = classTeacherField.text.toString().trim()
             if (!skipTeacherAssignment.isChecked && classTeacher.isBlank()) {
-                classTeacherWrapper.isErrorEnabled = true
-                classTeacherWrapper.error = "Select a valid teacher from the list."
-                isCancelable = true
-                okButton.isEnabled = true
+                onError()
                 return
             } else if (skipTeacherAssignment.isChecked) {
                 classTeacher = ""
@@ -107,21 +114,66 @@ class AddClassDialog : BottomSheetDialogFragment() {
 
             if (teachers.contains(classTeacher) || skipTeacherAssignment.isChecked) {
                 val schoolClass = SchoolClass(className, classTeacher)
+                if (classTeacher.isNotBlank()) {
+                    CygnusApp.refToClasses(schoolId)
+                            .orderByChild("teacherId")
+                            .equalTo(classTeacher)
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    val t = object : GenericTypeIndicator<HashMap<String, SchoolClass>>() {}
+                                    snapshot.getValue(t)?.values?.filter { it.name != className }?.forEach {
+                                        CygnusApp.refToClasses(schoolId)
+                                                .child(it.name)
+                                                .child("teacherId")
+                                                .setValue("")
+                                    }
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+
+                                }
+                            })
+                }
+
+                val oldTeacher = model?.teacherId
+                if (!oldTeacher.isNullOrBlank() && oldTeacher != classTeacher) {
+                    UsersDao.getUserByEmail(schoolId, oldTeacher, OnSuccessListener {
+                        it?.let { user ->
+                            (user as Teacher).classId = ""
+                            UsersDao.update(schoolId, user, OnSuccessListener { })
+                        }
+                    })
+                }
+
                 ClassesDao.add(schoolId, schoolClass, OnCompleteListener {
-                    if (it.isSuccessful) dismiss() else {
-                        classTeacherWrapper.isErrorEnabled = true
-                        classTeacherWrapper.error = it.exception?.message
-                        isCancelable = true
-                        okButton.isEnabled = true
-                    }
+                    if (it.isSuccessful) {
+                        if (classTeacher.isBlank()) onSuccess(schoolClass) // N -> N
+                        else UsersDao.getUserByEmail(schoolId, classTeacher, OnSuccessListener {
+                            it?.let { user ->
+                                if (user is Teacher) {
+                                    user.classId = className
+                                    UsersDao.update(schoolId, user, OnSuccessListener { success ->
+                                        if (success) onSuccess(schoolClass) else onError(getString(R.string.error_unknown))
+                                    })
+                                } else onError()
+                            } ?: onError()
+                        })
+                    } else onError(it.exception?.message)
                 })
-            } else {
-                classTeacherWrapper.isErrorEnabled = true
-                classTeacherWrapper.error = "Select a valid teacher from the list."
-                isCancelable = true
-                okButton.isEnabled = true
-            }
+            } else onError()
         }
+    }
+
+    private fun onSuccess(schoolClass: SchoolClass) {
+        onOkListener?.let { it(schoolClass) }
+        dismiss()
+    }
+
+    private fun onError(error: String? = null) {
+        classTeacherWrapper.isErrorEnabled = true
+        classTeacherWrapper.error = error ?: getString(R.string.error_invalid_teacher)
+        isCancelable = true
+        okButton.isEnabled = true
     }
 
     companion object {
