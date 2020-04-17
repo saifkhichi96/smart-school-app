@@ -12,9 +12,11 @@ import com.cygnus.dao.UsersDao
 import com.cygnus.model.Subject
 import com.cygnus.model.Teacher
 import com.cygnus.model.User
+import com.cygnus.timetable.TimetablePagerAdapter
 import com.cygnus.view.SubjectView
 import com.google.android.gms.tasks.OnSuccessListener
 import kotlinx.android.synthetic.main.activity_dashboard_teacher.*
+import java.util.*
 
 /**
  * TeacherDashboardActivity is the teachers' homepage.
@@ -89,6 +91,13 @@ class TeacherDashboardActivity : DashboardActivity() {
 
     private fun onSubjectsReceived(subjects: List<Subject>) {
         coursesList.adapter = SubjectAdapter(this, subjects)
+
+        timetableView.adapter = TimetablePagerAdapter(supportFragmentManager, subjects)
+        timetableDay.setupWithViewPager(timetableView)
+
+        var today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2
+        if (today < 0) today = 7
+        timetableDay.selectTab(timetableDay.getTabAt(today))
     }
 
     private inner class SubjectAdapter(context: Context, val subjects: List<Subject>)

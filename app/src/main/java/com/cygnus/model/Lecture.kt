@@ -1,6 +1,7 @@
 package com.cygnus.model
 
 import co.aspirasoft.model.BaseModel
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -27,5 +28,11 @@ class Lecture(var dayOfWeek: Int, var startTime: Date, var endTime: Date) : Base
             throw IllegalStateException("Day of week must be in range 1-7 inclusive")
         }
     }
+
+    override fun toString(): String {
+        val formatter = SimpleDateFormat("hh:mm", Locale.getDefault())
+        return "${formatter.format(startTime)} - ${formatter.format(endTime)}"
+    }
+
 
 }

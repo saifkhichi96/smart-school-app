@@ -107,16 +107,31 @@
         android:layout_height="wrap_content"
         android:numColumns="2"/>
 
-  </LinearLayout>
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/TextAppearance.MaterialComponents.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textStyle="bold"
+        android:text="Timetable"/>
 
-  <com.google.android.material.bottomnavigation.BottomNavigationView
-      android:id="@+id/bottom_navigation"
-      android:layout_width="match_parent"
-      android:layout_height="?actionBarSize"
-      android:layout_gravity="bottom"
-      android:background="@color/colorPrimary"
-      app:itemIconTint="@android:color/primary_text_dark"
-      app:itemTextColor="@android:color/primary_text_dark"
-      app:menu="@menu/bottom_navigation_menu"/>
+    <com.google.android.material.tabs.TabLayout
+        style="@style/Widget.MaterialComponents.TabLayout"
+        android:id="@+id/timetableDay"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_marginTop="8dp"
+        app:tabBackground="@drawable/box"
+        app:tabSelectedTextColor="@android:color/primary_text_dark"
+        app:tabIndicatorColor="@color/colorPrimary"
+        app:tabIndicatorHeight="24dp"
+        app:tabMode="fixed"/>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/timetableView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+  </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
