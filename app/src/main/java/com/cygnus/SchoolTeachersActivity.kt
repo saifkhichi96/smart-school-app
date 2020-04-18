@@ -1,10 +1,10 @@
 package com.cygnus
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardChildActivity
 import com.cygnus.dao.Invite
@@ -68,6 +68,7 @@ class SchoolTeachersActivity : DashboardChildActivity() {
     }
 
     override fun updateUI(currentUser: User) {
+        teachers.clear()
         for (invite in invites) {
             val teacher = Teacher("", "", Credentials(invite.invitee, ""))
             if (status == getString(R.string.status_invite_accepted)) {
@@ -93,7 +94,7 @@ class SchoolTeachersActivity : DashboardChildActivity() {
             val v = super.getView(position, convertView, parent)
             val teacher = teachers[position]
             val email = teacher.email
-            v.findViewById<Button>(R.id.revokeInviteButton).setOnClickListener {
+            v.findViewById<View>(R.id.revokeInviteButton).setOnClickListener {
                 for (invite in invites) {
                     if (invite.invitee == email) {
                         Snackbar.make(contentList, "Revoke invite to $email?", Snackbar.LENGTH_INDEFINITE)
@@ -108,6 +109,12 @@ class SchoolTeachersActivity : DashboardChildActivity() {
                         break
                     }
                 }
+            }
+
+            v.setOnClickListener {
+                startSecurely(ProfileActivity::class.java, Intent().apply {
+                    putExtra(CygnusApp.EXTRA_PROFILE_USER, teacher)
+                })
             }
             return v
         }

@@ -21,10 +21,8 @@
         android:id="@+id/userImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="4dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/ph_student"
-        app:tint="?android:attr/textColorPrimary"/>
+        android:scaleType="centerCrop"
+        android:src="@drawable/ph_student"/>
 
   </com.google.android.material.card.MaterialCardView>
 

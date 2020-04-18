@@ -26,10 +26,10 @@ object InvitesDao {
      * @param schoolId The id of the inviting school.
      * @param invitee Email address of the invitee.
      */
-    fun add(schoolId: String, invitee: String) {
+    fun add(schoolId: String, invitee: String, sender: String) {
         CygnusApp.refToInvites(schoolId)
                 .push()
-                .setValue("${invitee}:${CygnusApp.STATUS_INVITE_PENDING}")
+                .setValue("${sender}:${invitee}:${CygnusApp.STATUS_INVITE_PENDING}")
     }
 
     /**
@@ -41,7 +41,7 @@ object InvitesDao {
      */
     fun get(schoolId: String, invitee: String, listener: OnSuccessListener<Invite?>) {
         getAll(schoolId, OnSuccessListener { invites ->
-            val thisInvite = Invite("", invitee, "")
+            val thisInvite = Invite("", "", invitee, "")
             if (invites != null && invites.contains(thisInvite)) {
                 listener.onSuccess(invites.find { it.invitee == invitee })
             } else {
@@ -71,7 +71,8 @@ object InvitesDao {
                         invites.add(Invite(
                                 entry.key,
                                 entry.value.split(":")[0],
-                                entry.value.split(":")[1]
+                                entry.value.split(":")[1],
+                                entry.value.split(":")[2]
                         ))
                     }
                     listener.onSuccess(invites)
@@ -102,7 +103,7 @@ object InvitesDao {
 }
 
 @Parcelize
-data class Invite(val id: String, val invitee: String, val status: String) : Parcelable {
+data class Invite(val id: String, val sender: String, val invitee: String, val status: String) : Parcelable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

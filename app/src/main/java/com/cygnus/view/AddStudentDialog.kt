@@ -80,7 +80,7 @@ class AddStudentDialog : BottomSheetDialogFragment() {
 
     private fun inviteStudent(rollNo: String, email: String) {
         context?.let {
-            InvitationTask(it, schoolId, email, classId, rollNo).start { task ->
+            InvitationTask(it, schoolId, email, teacherId, classId, rollNo).start { task ->
                 isCancelable = true
                 okButton.isEnabled = true
 

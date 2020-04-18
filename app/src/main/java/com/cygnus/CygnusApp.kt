@@ -35,6 +35,7 @@ class CygnusApp : Application() {
         const val EXTRA_INVITES = "invites"
         const val EXTRA_NEW_SIGN_UP = "new_user"
         const val EXTRA_NOTICE_POSTS = "notice_posts"
+        const val EXTRA_PROFILE_USER = "profile_user"
         const val EXTRA_REFERRAL_CODE = "referral_code"
         const val EXTRA_SCHOOL = "school"
         const val EXTRA_SCHOOL_SUBJECT = "subject"

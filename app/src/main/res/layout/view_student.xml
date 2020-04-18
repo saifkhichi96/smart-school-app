@@ -9,22 +9,22 @@
     android:padding="@dimen/activity_horizontal_margin">
 
   <com.google.android.material.card.MaterialCardView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+      android:layout_width="32dp"
+      android:layout_height="32dp"
       app:cardBackgroundColor="?android:attr/colorBackground"
       app:cardCornerRadius="16dp">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/userImage"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/ph_student"/>
 
   </com.google.android.material.card.MaterialCardView>
 
   <LinearLayout
-      android:layout_width="wrap_content"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
       android:layout_marginLeft="8dp"
@@ -32,7 +32,7 @@
 
     <com.google.android.material.textview.MaterialTextView
         style="@style/TextAppearance.MaterialComponents.Body1"
-        android:id="@+id/teacherName"
+        android:id="@+id/nameField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/ph_name"
@@ -40,21 +40,11 @@
 
     <com.google.android.material.textview.MaterialTextView
         style="@style/TextAppearance.MaterialComponents.Body2"
-        android:id="@+id/teacherEmail"
+        android:id="@+id/rollNo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ph_email"/>
+        android:text="@string/hint_student_roll_no"/>
 
   </LinearLayout>
-
-  <com.google.android.material.button.MaterialButton
-      android:id="@+id/revokeInviteButton"
-      style="@style/Widget.MaterialComponents.Button.TextButton"
-      android:layout_width="match_parent"
-      android:layout_height="32dp"
-      android:gravity="top|end"
-      android:padding="0dp"
-      android:text="@string/label_revoke"
-      app:rippleColor="@android:color/transparent"/>
 
 </LinearLayout>

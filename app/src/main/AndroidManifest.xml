@@ -4,6 +4,10 @@
           package="com.cygnus"
           tools:ignore="LockedOrientationActivity">
 
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
   <application
       android:name=".CygnusApp"
       android:icon="@mipmap/ic_launcher"
@@ -38,6 +42,10 @@
               android:screenOrientation="sensorPortrait"/>
 
     <activity android:name=".TeacherDashboardActivity"
+              android:screenOrientation="sensorPortrait"/>
+
+    <activity android:name=".ProfileActivity"
+              android:label="Profile"
               android:screenOrientation="sensorPortrait"/>
 
     <activity android:name=".StudentsActivity"

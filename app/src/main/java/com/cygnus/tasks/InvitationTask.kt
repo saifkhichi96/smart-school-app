@@ -23,6 +23,7 @@ class InvitationTask(
         val context: Context,
         private val referral: String,
         private val inviteeEmail: String,
+        private val sender: String,
         private val classId: String? = null,
         private val rollNo: String? = null
 ) : FirebaseTask() {
@@ -39,7 +40,7 @@ class InvitationTask(
     private fun checkAlreadyInvited(snapshot: DataSnapshot): Boolean {
         var exists = false
         for (child in snapshot.children) {
-            if (child.value.toString().startsWith(inviteeEmail, true)) {
+            if (child.value.toString().split(":")[1].equals(inviteeEmail, true)) {
                 exists = true
                 break
             }
@@ -63,7 +64,7 @@ class InvitationTask(
                     isTeacherInvite -> DynamicLinksUtils.createSignUpActionForTeacher(referral)
                     else -> DynamicLinksUtils.createSignUpActionForStudent(referral, rollNo!!, classId!!)
                 }).addOnSuccessListener {
-                    InvitesDao.add(referral, inviteeEmail)
+                    InvitesDao.add(referral, inviteeEmail, sender)
                 }
 
         return DummyTask(null)

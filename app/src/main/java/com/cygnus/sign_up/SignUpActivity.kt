@@ -151,6 +151,7 @@ class SignUpActivity : AppCompatActivity() {
                 this.classId = classId
                 this.rollNo = rollNumber
                 this.dateOfBirth = dateOfBirth
+                this.bloodType = bloodType
                 this.emergencyContact = emergencyContact
                 this.emergencyEmail = emergencyEmail
                 this.emergencyPhone = emergencyPhone
@@ -163,7 +164,6 @@ class SignUpActivity : AppCompatActivity() {
             it.credentials = Credentials(email, "")
             it.address = address
             it.phone = phone
-            it.bloodType = bloodType
             it.gender = gender
 
             onUserCreated(it, password)

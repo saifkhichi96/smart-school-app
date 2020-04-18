@@ -1,11 +1,14 @@
 package com.cygnus.view
 
-import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Gravity
 import androidx.appcompat.app.AlertDialog
+import com.cygnus.CygnusApp
+import com.cygnus.ProfileActivity
 import com.cygnus.R
+import com.cygnus.core.SecureActivity
 import com.cygnus.model.User
 import kotlinx.android.synthetic.main.dialog_account_switcher.*
 
@@ -19,7 +22,7 @@ import kotlinx.android.synthetic.main.dialog_account_switcher.*
  * @author saifkhichi96
  * @since 1.0.0
  */
-class AccountSwitcher private constructor(private val activity: Activity) : AlertDialog(activity) {
+class AccountSwitcher private constructor(private val activity: SecureActivity) : AlertDialog(activity) {
 
     private lateinit var user: User
 
@@ -58,6 +61,13 @@ class AccountSwitcher private constructor(private val activity: Activity) : Aler
         tosButton.setOnClickListener {
 
         }
+
+        userSummaryView.setOnProfileButtonClickedListener {
+            activity.startSecurely(ProfileActivity::class.java, Intent().apply {
+                putExtra(CygnusApp.EXTRA_PROFILE_USER, it)
+            })
+            dismiss()
+        }
     }
 
     /**
@@ -68,7 +78,7 @@ class AccountSwitcher private constructor(private val activity: Activity) : Aler
      *
      * @property dialog The AccountSwitcher instance being built.
      */
-    class Builder(context: Activity) {
+    class Builder(context: SecureActivity) {
 
         private val dialog = AccountSwitcher(context)
 

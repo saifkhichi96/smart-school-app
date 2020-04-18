@@ -1,6 +1,7 @@
 package com.cygnus
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -69,13 +70,9 @@ class StudentsActivity : DashboardChildActivity() {
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val v = super.getView(position, convertView, parent)
             v.setOnClickListener {
-                /* TODO: val dialog = AddStudentDialog.newInstance(
-                        currentTeacher.classId!!,
-                        currentTeacher.id,
-                        schoolId,
-                        students[position]
-                )
-                dialog.show(supportFragmentManager, dialog.toString()) */
+                startSecurely(ProfileActivity::class.java, Intent().apply {
+                    putExtra(CygnusApp.EXTRA_PROFILE_USER, students[position])
+                })
             }
             return v
         }

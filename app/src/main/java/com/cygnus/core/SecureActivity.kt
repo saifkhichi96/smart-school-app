@@ -69,7 +69,7 @@ abstract class SecureActivity : AppCompatActivity() {
     /**
      * Ensures required arguments are forwarded when opening another secure activity.
      */
-    protected fun startSecurely(target: Class<out SecureActivity>, src: Intent? = null) {
+    fun startSecurely(target: Class<out SecureActivity>, src: Intent? = null) {
         startActivity(Intent(this, target).apply {
             this.putExtra(CygnusApp.EXTRA_USER, currentUser)
             this.putExtra(CygnusApp.EXTRA_SCHOOL, schoolId)

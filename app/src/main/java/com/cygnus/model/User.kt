@@ -38,12 +38,6 @@ sealed class User(var id: String, var name: String, var credentials: Credentials
             setChanged()
         }
 
-    var bloodType: String? = null
-        set(value) {
-            field = value
-            setChanged()
-        }
-
     var gender: String? = null
         set(value) {
             field = value
@@ -100,6 +94,12 @@ class Student(id: String, name: String, credentials: Credentials, var classId: S
     constructor() : this("", "", Credentials(), "", "")
 
     var dateOfBirth: String? = null
+        set(value) {
+            field = value
+            setChanged()
+        }
+
+    var bloodType: String? = null
         set(value) {
             field = value
             setChanged()
@@ -169,7 +169,6 @@ class Teacher(id: String, name: String, credentials: Credentials) : User(id, nam
         this.credentials = teacher.credentials
         this.address = teacher.address
         this.phone = teacher.phone
-        this.bloodType = teacher.bloodType
         this.gender = teacher.gender
         this.classId = teacher.classId
         this.subjects = teacher.subjects

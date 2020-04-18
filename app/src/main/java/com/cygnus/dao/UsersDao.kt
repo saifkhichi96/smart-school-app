@@ -51,7 +51,7 @@ object UsersDao {
                 "$schoolId/users/${user.id}/" to user,  // user details
                 "user_schools/${user.id}/" to schoolId, // link to user's school
                 "$schoolId/invites/${invite.id}/"       // mark invite as `Accepted`
-                        to "${user.email}:${CygnusApp.STATUS_INVITE_ACCEPTED}"
+                        to "${invite.sender}:${user.email}:${CygnusApp.STATUS_INVITE_ACCEPTED}"
         )).addOnCompleteListener(listener)
     }
 

@@ -13,9 +13,7 @@ import co.aspirasoft.util.InputUtils.showError
 import com.cygnus.core.DashboardActivity
 import com.cygnus.dao.Invite
 import com.cygnus.dao.InvitesDao
-import com.cygnus.dao.UsersDao
 import com.cygnus.model.School
-import com.cygnus.model.Teacher
 import com.cygnus.model.User
 import com.cygnus.tasks.InvitationTask
 import com.cygnus.view.EmailsInputDialog
@@ -159,7 +157,7 @@ class SchoolDashboardActivity : DashboardActivity() {
      * @param listener Optional callback to listen for completion of invitation task.
      */
     private fun inviteSingleEmail(email: String, listener: OnCompleteListener<Void?>? = null) {
-        InvitationTask(this, currentUser.id, email)
+        InvitationTask(this, currentUser.id, email, schoolId)
                 .start { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(this@SchoolDashboardActivity, getString(R.string.status_invitation_sent), Toast.LENGTH_LONG).show()
@@ -231,17 +229,14 @@ class SchoolDashboardActivity : DashboardActivity() {
             invitedStaff.clear()
             joinedStaff.clear()
             it.orEmpty().forEach { invite ->
-                UsersDao.getUserByEmail(schoolId, invite.invitee, OnSuccessListener { user ->
-                    if (user != null && user is Teacher) {
-                        when (invite.status) {
-                            CygnusApp.STATUS_INVITE_PENDING -> invitedStaff.add(invite)
-                            else -> joinedStaff.add(invite)
-                        }
-
-                        showStaffStats(invitedStaff.size, joinedStaff.size)
+                if (invite.sender == schoolId) {
+                    when (invite.status) {
+                        CygnusApp.STATUS_INVITE_PENDING -> invitedStaff.add(invite)
+                        else -> joinedStaff.add(invite)
                     }
-                })
+                }
             }
+            showStaffStats(invitedStaff.size, joinedStaff.size)
         })
     }
 
