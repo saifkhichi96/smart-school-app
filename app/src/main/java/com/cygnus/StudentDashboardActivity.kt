@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardActivity
+import com.cygnus.dao.NoticeBoardDao
 import com.cygnus.dao.SubjectsDao
+import com.cygnus.model.NoticeBoardPost
 import com.cygnus.model.Student
 import com.cygnus.model.Subject
 import com.cygnus.model.User
@@ -30,6 +32,7 @@ import java.util.*
 class StudentDashboardActivity : DashboardActivity() {
 
     private lateinit var currentStudent: Student
+    private var classPosts = ArrayList<NoticeBoardPost>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,9 +49,20 @@ class StudentDashboardActivity : DashboardActivity() {
             }
         }
 
-        // TODO: Set up click listeners
+        // TODO: Set up attendance click listeners
         attendanceButton.setOnClickListener { }
-        classAnnouncementsButton.setOnClickListener { }
+        classAnnouncementsButton.setOnClickListener {
+            startSecurely(NoticeActivity::class.java, Intent().apply {
+                putParcelableArrayListExtra(CygnusApp.EXTRA_NOTICE_POSTS, classPosts)
+            })
+        }
+
+        NoticeBoardDao.getPostsByClass(
+                schoolId,
+                currentStudent.classId,
+                OnSuccessListener {
+                    classPosts = it
+                })
     }
 
     /**

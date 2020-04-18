@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Appointment is a model class which represents a weekly appointment.
+ * Lecture is a model class which represents a weekly appointment.
  *
  * An appointment is a weekly meeting held on a particular day, at a defined time
  * and a location.

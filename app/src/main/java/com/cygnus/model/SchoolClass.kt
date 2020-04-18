@@ -35,4 +35,6 @@ class SchoolClass(name: String, teacherId: String) : BaseModel() {
 
     var subjects: HashMap<String, Subject>? = null
 
+    var notices: HashMap<String, NoticeBoardPost>? = null
+
 }

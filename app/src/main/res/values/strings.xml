@@ -23,6 +23,7 @@
   <string name="hint_emails">Emails</string>
   <string name="hint_emergency_contact">Emergency Contact</string>
   <string name="hint_name">Name</string>
+  <string name="hint_message">Message</string>
   <string name="hint_password">Password</string>
   <string name="hint_password_confirm">Confirm Password</string>
   <string name="hint_phone">Phone</string>
@@ -55,6 +56,7 @@
   <string name="label_mark_attendance">Mark Attendance</string>
   <string name="label_non_binary">Other</string>
   <string name="label_see_attendance">See Attendance</string>
+  <string name="label_send">Send</string>
 
   <!-- Section Headings -->
   <string name="academics_head">Academics</string>

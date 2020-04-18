@@ -7,16 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardActivity
+import com.cygnus.dao.ClassesDao
 import com.cygnus.dao.SubjectsDao
 import com.cygnus.dao.UsersDao
-import com.cygnus.model.Subject
-import com.cygnus.model.Teacher
-import com.cygnus.model.User
+import com.cygnus.model.*
 import com.cygnus.timetable.TimetablePagerAdapter
 import com.cygnus.view.SubjectView
 import com.google.android.gms.tasks.OnSuccessListener
 import kotlinx.android.synthetic.main.activity_dashboard_teacher.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * TeacherDashboardActivity is the teachers' homepage.
@@ -31,6 +31,7 @@ import java.util.*
 class TeacherDashboardActivity : DashboardActivity() {
 
     private lateinit var currentTeacher: Teacher
+    private var assignedClass: SchoolClass? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,8 +50,23 @@ class TeacherDashboardActivity : DashboardActivity() {
 
         // Set up click listeners
         attendanceButton.setOnClickListener { startSecurely(AttendanceActivity::class.java) }
-        classAnnouncementsButton.setOnClickListener { startSecurely(NoticeActivity::class.java) }
+        classAnnouncementsButton.setOnClickListener {
+            val posts = ArrayList<NoticeBoardPost>()
+            assignedClass?.notices?.values?.let { posts.addAll(it) }
+            startSecurely(NoticeActivity::class.java, Intent().apply {
+                putParcelableArrayListExtra(CygnusApp.EXTRA_NOTICE_POSTS, posts)
+            })
+        }
         manageStudentsButton.setOnClickListener { startSecurely(StudentsActivity::class.java) }
+
+        if (currentTeacher.isClassTeacher()) {
+            ClassesDao.getClassByTeacher(
+                    schoolId,
+                    currentTeacher.email,
+                    OnSuccessListener {
+                        assignedClass = it
+                    })
+        }
     }
 
     /**

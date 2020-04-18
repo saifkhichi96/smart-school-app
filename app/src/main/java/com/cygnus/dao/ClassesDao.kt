@@ -56,4 +56,20 @@ object ClassesDao {
                 })
     }
 
+    fun getClassByTeacher(schoolId: String, teacherId: String, listener: OnSuccessListener<SchoolClass?>) {
+        CygnusApp.refToClasses(schoolId)
+                .orderByChild("teacherId")
+                .equalTo(teacherId)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val t = object : GenericTypeIndicator<HashMap<String, SchoolClass>>() {}
+                        listener.onSuccess(snapshot.getValue(t)?.values?.elementAtOrNull(0))
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        listener.onSuccess(null)
+                    }
+                })
+    }
+
 }

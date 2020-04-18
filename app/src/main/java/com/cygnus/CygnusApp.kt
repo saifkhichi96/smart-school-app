@@ -34,6 +34,7 @@ class CygnusApp : Application() {
         const val EXTRA_INVITE_STATUS = "invite_status"
         const val EXTRA_INVITES = "invites"
         const val EXTRA_NEW_SIGN_UP = "new_user"
+        const val EXTRA_NOTICE_POSTS = "notice_posts"
         const val EXTRA_REFERRAL_CODE = "referral_code"
         const val EXTRA_SCHOOL = "school"
         const val EXTRA_SCHOOL_SUBJECT = "subject"
@@ -58,6 +59,7 @@ class CygnusApp : Application() {
         fun refToUsers(schoolId: String) = db.getReference("$schoolId/users/")
         fun refToClasses(schoolId: String) = db.getReference("$schoolId/classes/")
         fun refToSubjects(schoolId: String, classId: String) = db.getReference("$schoolId/classes/$classId/subjects/")
+        fun refToClassNoticeBoard(schoolId: String, classId: String) = db.getReference("$schoolId/classes/$classId/notices/")
     }
 
 }
