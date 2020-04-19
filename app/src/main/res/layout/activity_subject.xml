@@ -29,27 +29,19 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="@dimen/activity_horizontal_margin">
-
-      <LinearLayout
-          android:layout_width="match_parent"
+      <com.google.android.material.textview.MaterialTextView
+          style="@style/TextAppearance.MaterialComponents.Body1"
+          android:id="@+id/className"
+          android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:orientation="vertical">
+          android:text="@string/ph_assigned_class"/>
 
-        <com.google.android.material.textview.MaterialTextView
-            style="@style/TextAppearance.MaterialComponents.Body1"
-            android:id="@+id/className"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ph_assigned_class"/>
-
-        <com.google.android.material.textview.MaterialTextView
-            style="@style/TextAppearance.MaterialComponents.Body2"
-            android:id="@+id/teacherName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ph_name"/>
-
-      </LinearLayout>
+      <com.google.android.material.textview.MaterialTextView
+          style="@style/TextAppearance.MaterialComponents.Body2"
+          android:id="@+id/teacherName"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/ph_name"/>
 
       <LinearLayout
           android:layout_width="match_parent"
@@ -113,6 +105,38 @@
 
       <co.aspirasoft.view.NestedListView
           android:id="@+id/contentList"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"/>
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:gravity="center_vertical"
+          android:orientation="horizontal">
+
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Homework Sheets"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/addHomeworkButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:gravity="end"
+            android:padding="0dp"
+            android:text="@string/label_add"
+            android:visibility="gone"
+            app:rippleColor="@android:color/transparent"/>
+
+      </LinearLayout>
+
+      <co.aspirasoft.view.NestedListView
+          android:id="@+id/homeworkList"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"/>
 
