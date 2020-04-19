@@ -6,11 +6,9 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
 import co.aspirasoft.view.BaseView
-import com.bumptech.glide.Glide
 import com.cygnus.R
 import com.cygnus.model.Student
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
+import com.cygnus.storage.ImageLoader
 
 class StudentView : BaseView<Student> {
 
@@ -32,12 +30,9 @@ class StudentView : BaseView<Student> {
     }
 
     override fun updateView(model: Student) {
-        val photoRef = Firebase.storage.getReference("users/${model.id}/photo.png")
-        photoRef.downloadUrl.addOnSuccessListener {
-            if (it != null) Glide.with(this)
-                    .load(photoRef)
-                    .into(studentImageView)
-        }
+        ImageLoader.with(context)
+                .load(model)
+                .into(studentImageView)
 
         studentNameView.text = model.name
         studentRollNoView.text = "Roll # ${model.rollNo}"

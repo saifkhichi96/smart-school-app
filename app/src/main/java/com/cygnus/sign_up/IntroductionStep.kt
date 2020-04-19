@@ -10,8 +10,6 @@ import androidx.core.text.HtmlCompat
 import co.aspirasoft.util.InputUtils.isNotBlank
 import co.aspirasoft.view.WizardViewStep
 import com.cygnus.R
-import com.cygnus.model.Student
-import com.cygnus.model.Teacher
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -57,10 +55,7 @@ class IntroductionStep : WizardViewStep("Say Hi") {
         super.onStart()
         activity?.let {
             it as SignUpActivity
-            when (it.accountType) {
-                Student::class -> userImage.setImageResource(R.drawable.ph_student)
-                Teacher::class -> userImage.setImageResource(R.drawable.ph_teacher)
-            }
+            userImage.setImageResource(R.drawable.ph_student)
         }
     }
 

@@ -18,120 +18,128 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"/>
+        android:layout_height="?attr/actionBarSize"
+        app:layout_scrollFlags="scroll"/>
 
   </com.google.android.material.appbar.AppBarLayout>
 
-  <LinearLayout
+  <androidx.core.widget.NestedScrollView
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:orientation="vertical"
-      android:paddingStart="@dimen/activity_horizontal_margin"
-      android:paddingEnd="@dimen/activity_horizontal_margin"
-      app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+      app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        app:cardBackgroundColor="?colorAccent"
-        app:cardElevation="4dp">
+        android:orientation="vertical"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin">
 
-      <LinearLayout
+      <com.google.android.material.card.MaterialCardView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:background="@drawable/gradient_accent"
-          android:padding="16dp"
-          android:orientation="vertical">
+          android:layout_marginTop="@dimen/activity_vertical_margin"
+          app:cardBackgroundColor="?colorAccent"
+          app:cardElevation="4dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:background="@drawable/gradient_accent"
+            android:padding="16dp"
             android:orientation="vertical">
 
-          <com.google.android.material.textview.MaterialTextView
-              android:id="@+id/headline"
-              style="@style/TextAppearance.MaterialComponents.Overline"
+          <LinearLayout
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:text="@string/student_class_head"/>
+              android:layout_marginBottom="16dp"
+              android:orientation="vertical">
 
-          <com.google.android.material.textview.MaterialTextView
-              android:id="@+id/className"
-              style="@style/TextAppearance.MaterialComponents.Button"
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/headline"
+                style="@style/TextAppearance.MaterialComponents.Overline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/student_class_head"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/className"
+                style="@style/TextAppearance.MaterialComponents.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/ph_assigned_class"/>
+
+          </LinearLayout>
+
+          <com.google.android.material.button.MaterialButton
+              android:id="@+id/attendanceButton"
+              style="@style/Widget.MaterialComponents.Button.TextButton"
               android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:textStyle="bold"
-              android:text="@string/ph_assigned_class"/>
+              android:layout_height="32dp"
+              android:padding="0dp"
+              android:text="@string/label_see_attendance"
+              android:textAllCaps="false"
+              app:icon="@drawable/ic_attendance"
+              app:iconSize="24dp"/>
+
+          <com.google.android.material.button.MaterialButton
+              android:id="@+id/classAnnouncementsButton"
+              style="@style/Widget.MaterialComponents.Button.TextButton"
+              android:layout_width="wrap_content"
+              android:layout_height="32dp"
+              android:padding="0dp"
+              android:text="@string/label_announcements"
+              android:textAllCaps="false"
+              app:icon="@drawable/ic_announcements"
+              app:iconSize="24dp"/>
 
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/attendanceButton"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:padding="0dp"
-            android:text="@string/label_see_attendance"
-            android:textAllCaps="false"
-            app:icon="@drawable/ic_attendance"
-            app:iconSize="24dp"/>
+      </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/classAnnouncementsButton"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:padding="0dp"
-            android:text="@string/label_announcements"
-            android:textAllCaps="false"
-            app:icon="@drawable/ic_announcements"
-            app:iconSize="24dp"/>
+      <com.google.android.material.textview.MaterialTextView
+          style="@style/TextAppearance.MaterialComponents.Button"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/activity_vertical_margin"
+          android:textStyle="bold"
+          android:text="@string/courses_head"/>
 
-      </LinearLayout>
+      <co.aspirasoft.view.NestedGridView
+          android:id="@+id/coursesList"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:numColumns="2"/>
 
-    </com.google.android.material.card.MaterialCardView>
+      <com.google.android.material.textview.MaterialTextView
+          style="@style/TextAppearance.MaterialComponents.Button"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/activity_vertical_margin"
+          android:textStyle="bold"
+          android:text="@string/timetable_head"/>
 
-    <com.google.android.material.textview.MaterialTextView
-        style="@style/TextAppearance.MaterialComponents.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:textStyle="bold"
-        android:text="@string/courses_head"/>
+      <com.google.android.material.tabs.TabLayout
+          style="@style/Widget.MaterialComponents.TabLayout"
+          android:id="@+id/timetableDay"
+          android:layout_width="match_parent"
+          android:layout_height="24dp"
+          android:layout_marginTop="8dp"
+          app:tabGravity="fill"
+          app:tabBackground="@drawable/box"
+          app:tabSelectedTextColor="@android:color/primary_text_dark"
+          app:tabIndicatorColor="@color/colorPrimary"
+          app:tabIndicatorHeight="24dp"
+          app:tabMode="fixed"/>
 
-    <GridView
-        android:id="@+id/coursesList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:numColumns="2"/>
+      <co.aspirasoft.view.NestedViewPager
+          android:id="@+id/timetableView"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"/>
 
-    <com.google.android.material.textview.MaterialTextView
-        style="@style/TextAppearance.MaterialComponents.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:textStyle="bold"
-        android:text="Timetable"/>
+    </LinearLayout>
 
-    <com.google.android.material.tabs.TabLayout
-        style="@style/Widget.MaterialComponents.TabLayout"
-        android:id="@+id/timetableDay"
-        android:layout_width="match_parent"
-        android:layout_height="24dp"
-        android:layout_marginTop="8dp"
-        app:tabBackground="@drawable/box"
-        app:tabSelectedTextColor="@android:color/primary_text_dark"
-        app:tabIndicatorColor="@color/colorPrimary"
-        app:tabIndicatorHeight="24dp"
-        app:tabMode="fixed"/>
-
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/timetableView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-  </LinearLayout>
+  </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -2,12 +2,16 @@ package com.cygnus
 
 import android.app.ProgressDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
+import android.view.Menu
 import android.view.View
 import android.widget.Toast
 import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
+import androidx.core.view.iterator
 import co.aspirasoft.util.InputUtils.isNotBlank
 import co.aspirasoft.util.InputUtils.showError
 import com.cygnus.core.DashboardActivity
@@ -46,6 +50,12 @@ class SchoolDashboardActivity : DashboardActivity() {
     override fun onStart() {
         super.onStart()
         trackSentInvites() // start the live counters
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menu?.iterator()?.forEach { it.icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP) }
+        return true
     }
 
     /**

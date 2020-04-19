@@ -14,6 +14,8 @@ class TimetableFragment(val data: List<Pair<String, Lecture>>?) : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View = NestedListView(inflater.context).apply {
+        this.isHorizontalScrollBarEnabled = false
+        this.isVerticalScrollBarEnabled = false
         this.adapter = data?.let {
             LectureAdapter(inflater.context, it).apply {
                 sort { o1, o2 ->

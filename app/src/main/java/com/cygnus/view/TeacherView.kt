@@ -8,11 +8,9 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import co.aspirasoft.view.BaseView
-import com.bumptech.glide.Glide
 import com.cygnus.R
 import com.cygnus.model.Teacher
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
+import com.cygnus.storage.ImageLoader
 
 class TeacherView : BaseView<Teacher> {
 
@@ -54,12 +52,9 @@ class TeacherView : BaseView<Teacher> {
             teacherEmail.visibility = View.VISIBLE
             revokeInviteButton.visibility = View.GONE
 
-            val photoRef = Firebase.storage.getReference("users/${model.id}/photo.png")
-            photoRef.downloadUrl.addOnSuccessListener {
-                if (it != null) Glide.with(this)
-                        .load(photoRef)
-                        .into(teacherImage)
-            }
+            ImageLoader.with(context)
+                    .load(model)
+                    .into(teacherImage)
 
             teacherName.text = model.name
             teacherEmail.text = when (model.classId.isNullOrBlank()) {

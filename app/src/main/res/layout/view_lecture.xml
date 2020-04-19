@@ -12,6 +12,7 @@
       android:id="@+id/lectureDay"
       android:layout_width="match_parent"
       android:layout_height="20dp"
+      app:tabGravity="fill"
       app:tabBackground="@drawable/box"
       app:tabSelectedTextColor="@android:color/primary_text_dark"
       app:tabIndicatorColor="@color/colorPrimary"

@@ -44,7 +44,7 @@ object PermissionUtils {
      * Asks user to grant a [permission] if not already granted.
      *
      * An [explanation] message is shown if required. Result of this request
-     * with [requestCode] is received in [onRequestPermissionsResult].
+     * with [requestCode] is received in [Activity.onRequestPermissionsResult].
      *
      * Returns `true` if permission was already granted.
      */

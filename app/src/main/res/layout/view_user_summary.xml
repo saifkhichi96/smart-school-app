@@ -31,7 +31,7 @@
       android:id="@+id/userNameLabel"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:maxLines="1"
+      android:gravity="center"
       android:text="@string/ph_name"
       android:textStyle="bold"/>
 
@@ -40,8 +40,15 @@
       android:id="@+id/userEmailLabel"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:maxLines="1"
+      android:gravity="center"
       android:text="@string/ph_email"/>
+
+  <com.google.android.material.textview.MaterialTextView
+      style="@style/TextAppearance.MaterialComponents.Caption"
+      android:id="@+id/headline"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/ph_type"/>
 
   <com.google.android.material.button.MaterialButton
       style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -57,64 +64,5 @@
   <View android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#8888"/>
-
-  <LinearLayout
-      android:layout_width="256dp"
-      android:layout_height="wrap_content"
-      android:layout_margin="8dp"
-      android:orientation="vertical">
-
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-        android:id="@+id/addressLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="32dp"
-        android:layout_margin="0dp"
-        android:clickable="false"
-        android:padding="0dp"
-        android:text="@string/ph_address"
-        android:textAllCaps="false"
-        android:textColor="?android:attr/textColorPrimary"
-        android:maxLines="1"
-        app:icon="@drawable/ic_address"
-        app:iconSize="18dp"
-        app:iconPadding="4dp"
-        app:iconTint="?android:attr/textColorPrimary"/>
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-        android:id="@+id/phoneLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="32dp"
-        android:layout_margin="0dp"
-        android:clickable="false"
-        android:padding="0dp"
-        android:text="@string/ph_phone"
-        android:textAllCaps="false"
-        android:textColor="?android:attr/textColorPrimary"
-        android:maxLines="1"
-        app:icon="@drawable/ic_phone"
-        app:iconSize="18dp"
-        app:iconPadding="4dp"
-        app:iconTint="?android:attr/textColorPrimary"/>
-
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-        android:id="@+id/birthdayLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="32dp"
-        android:layout_margin="0dp"
-        android:clickable="false"
-        android:padding="0dp"
-        android:text="@string/ph_date"
-        android:textAllCaps="false"
-        android:textColor="?android:attr/textColorPrimary"
-        android:maxLines="1"
-        android:visibility="gone"
-        app:icon="@drawable/ic_birthday"
-        app:iconSize="18dp"
-        app:iconPadding="4dp"
-        app:iconTint="?android:attr/textColorPrimary"/>
-
-  </LinearLayout>
 
 </LinearLayout>

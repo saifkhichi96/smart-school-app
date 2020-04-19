@@ -11,23 +11,21 @@ import android.os.Handler
 import android.provider.MediaStore
 import android.view.View
 import co.aspirasoft.util.PermissionUtils
-import com.bumptech.glide.Glide
 import com.cygnus.core.DashboardChildActivity
 import com.cygnus.model.School
 import com.cygnus.model.Student
 import com.cygnus.model.Teacher
 import com.cygnus.model.User
+import com.cygnus.storage.FileManager
+import com.cygnus.storage.ImageLoader
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.storage
 import kotlinx.android.synthetic.main.activity_profile.*
 import java.io.ByteArrayOutputStream
 
 
 class ProfileActivity : DashboardChildActivity() {
 
-    private lateinit var photoRef: StorageReference
+    private lateinit var mFileManager: FileManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,19 +38,14 @@ class ProfileActivity : DashboardChildActivity() {
             deleteAccountButton.visibility = View.GONE
         }
         currentUser = user
-        photoRef = Firebase.storage.getReference("users/${currentUser.id}/photo.png")
-        photoRef.downloadUrl.addOnSuccessListener {
-            if (it != null) Glide.with(this)
-                    .load(photoRef)
-                    .into(userImage)
-        }
+        mFileManager = FileManager.newInstance(this, "users/${currentUser.id}/")
 
         changeUserImageButton.setOnClickListener {
             if (PermissionUtils.requestPermissionIfNeeded(
                             this,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            "",
-                            RESULT_WRITE_PERMISSION
+                            getString(R.string.permission_storage),
+                            RC_WRITE_PERMISSION
                     )) {
                 pickImage()
             }
@@ -62,7 +55,7 @@ class ProfileActivity : DashboardChildActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            RESULT_LOAD_IMAGE -> if (resultCode == Activity.RESULT_OK) {
+            RESULT_ACTION_LOAD -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { selectedImage ->
                     val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
                     contentResolver.query(
@@ -104,20 +97,16 @@ class ProfileActivity : DashboardChildActivity() {
 
                         val status = Snackbar.make(userImage, "Uploading...", Snackbar.LENGTH_INDEFINITE)
                         status.show()
-                        photoRef.delete().addOnCompleteListener {
-                            val uploadTask = photoRef.putBytes(bytes)
-                            uploadTask.addOnFailureListener {
-                                status.setText(it.message ?: "Failed to upload photo.")
-                                Handler().postDelayed({ status.dismiss() }, 1500L)
-                            }.addOnSuccessListener {
-                                status.setText("Photo uploaded.")
-                                Handler().postDelayed({ status.dismiss() }, 1500L)
-                                Glide.with(this)
-                                        .load(photoRef)
-                                        .into(userImage)
-                            }
-
-                        }
+                        mFileManager.upload("photo.png", bytes)
+                                .addOnFailureListener {
+                                    status.setText(it.message ?: "Failed to upload photo.")
+                                    Handler().postDelayed({ status.dismiss() }, 1500L)
+                                }
+                                .addOnSuccessListener {
+                                    status.setText("Photo uploaded.")
+                                    Handler().postDelayed({ status.dismiss() }, 1500L)
+                                    showUserImage(true)
+                                }
                     }
                 }
             }
@@ -126,7 +115,7 @@ class ProfileActivity : DashboardChildActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == RESULT_WRITE_PERMISSION) {
+        if (requestCode == RC_WRITE_PERMISSION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 pickImage()
             }
@@ -134,11 +123,15 @@ class ProfileActivity : DashboardChildActivity() {
     }
 
     override fun updateUI(currentUser: User) {
+        // PROFILE IMAGE
+        showUserImage()
+
+        // BASIC INFO
         userNameLabel.text = currentUser.name
-        userEmailLabel.text = currentUser.email
         headline.text = currentUser.type
 
         // PERSONAL INFO
+        if (currentUser is School) personalSection.visibility = View.GONE
         if (currentUser is Student) {
             birthdayLabel.visibility = View.VISIBLE
             birthdayLabel.text = currentUser.dateOfBirth
@@ -146,7 +139,12 @@ class ProfileActivity : DashboardChildActivity() {
         genderLabel.text = currentUser.gender
 
         // CONTACT INFO
+        if (currentUser is School) {
+            addressLabel.visibility = View.GONE
+            phoneLabel.visibility = View.GONE
+        }
         addressLabel.text = currentUser.address
+        userEmailLabel.text = currentUser.email
         phoneLabel.text = currentUser.phone
 
         // ACADEMIC INFO
@@ -186,14 +184,21 @@ class ProfileActivity : DashboardChildActivity() {
         // TODO: Allow account deletion
     }
 
+    private fun showUserImage(invalidate: Boolean = false) {
+        ImageLoader.with(this)
+                .load(currentUser)
+                .skipCache(invalidate)
+                .into(userImage)
+    }
+
     private fun pickImage() {
         val i = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(i, RESULT_LOAD_IMAGE)
+        startActivityForResult(i, RESULT_ACTION_LOAD)
     }
 
     companion object {
-        const val RESULT_WRITE_PERMISSION = 100
-        const val RESULT_LOAD_IMAGE = 200
+        private const val RESULT_ACTION_LOAD = 100
+        private const val RC_WRITE_PERMISSION = 200
     }
 
 }

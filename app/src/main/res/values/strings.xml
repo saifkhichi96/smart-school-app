@@ -1,6 +1,7 @@
 <resources>
   <string name="app_name">Cygnus School App</string>
   <string name="required_asterisk"><![CDATA[<font color=\'#cc0029\'>*</font>]]></string>
+  <string name="title_sign_in">Sign In</string>
 
   <!-- Placeholders -->
   <string name="ph_address">74 Bangur Avenue, Kolkata, West Bengal</string>
@@ -11,6 +12,7 @@
   <string name="ph_phone">+9125742299</string>
   <string name="ph_school">The Exemplary School</string>
   <string name="ph_student_count">%d Student(s)</string>
+  <string name="ph_type">Student</string>
 
   <!-- Input Hints -->
   <string name="hint_blood_group">Blood Group</string>
@@ -55,10 +57,18 @@
   <string name="label_manage_students">Manage Your Students</string>
   <string name="label_mark_attendance">Mark Attendance</string>
   <string name="label_non_binary">Other</string>
+  <string name="label_privacy">Privacy Policy</string>
   <string name="label_see_attendance">See Attendance</string>
   <string name="label_send">Send</string>
+  <string name="label_tos">Terms of Service</string>
+  <string name="label_change_photo">Change Photo</string>
+  <string name="label_change_password">Change Password</string>
+  <string name="label_delete_account">Delete Account</string>
+  <string name="label_forgot_password">Forgot Password?</string>
 
   <!-- Section Headings -->
+  <string name="about_head">About</string>
+  <string name="academic_head">Academic Info</string>
   <string name="academics_head">Academics</string>
   <string name="academics_desc">Add/Edit the classes and courses taught at your school. You can also
     assign class teachers, and select instructors for each subject.
@@ -75,13 +85,18 @@
   <string name="add_subject_desc">Enter details of the new subject to add it to your school. Please note that each
     subject taught to a class must have a unique name.
   </string>
-  <string name="student_class_head">You are enrolled in</string>
-  <string name="teacher_class_head">You are assigned to</string>
+  <string name="contact_head">Contact</string>
+  <string name="course_material_head">Course Material</string>
   <string name="courses_head">Your Courses</string>
+  <string name="emergency_head">Emergency Info</string>
+  <string name="lecture_times_head">Lecture Times</string>
   <string name="staff_head">Staff</string>
   <string name="staff_desc">Invite your team members to join Cygnus. A magic link will be emailed which
     can be used to sign up.
   </string>
+  <string name="student_class_head">You are enrolled in</string>
+  <string name="teacher_class_head">You are assigned to</string>
+  <string name="timetable_head">Timetable</string>
 
   <!-- Prompts and Explanations -->
   <string name="use_invited_email">Please use the same email address on which you received the sign up invitation.
@@ -91,6 +106,10 @@
     \n\nPlease complete the registration process by creating a password for your new account.
   </string>
   <string name="prompt_cancel_signup">Your account has not been created yet. Do you want to exit sign up?</string>
+  <string name="permission_storage">We need permission to access your file storage in order to download
+    images, course contents, and other application files. The files you access frequently are cached on
+    your device in order to provide you a smoother experience.
+  </string>
 
   <!-- Status Messages -->
   <string name="status_invitation_sending">Sending Invitation</string>
