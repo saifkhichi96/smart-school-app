@@ -67,6 +67,11 @@ class StudentsActivity : DashboardChildActivity() {
     private inner class StudentAdapter(context: Context, val students: List<Student>)
         : ModelViewAdapter<Student>(context, students, StudentView::class) {
 
+        override fun notifyDataSetChanged() {
+            students.sortedBy { it.rollNo }
+            super.notifyDataSetChanged()
+        }
+
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val v = super.getView(position, convertView, parent)
             v.setOnClickListener {

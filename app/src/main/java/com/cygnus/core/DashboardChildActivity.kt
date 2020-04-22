@@ -19,7 +19,7 @@ abstract class DashboardChildActivity : SecureActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if (item.itemId == android.R.id.home) {
-            super.onBackPressed()
+            onBackPressed()
             true
         } else super.onOptionsItemSelected(item)
     }
