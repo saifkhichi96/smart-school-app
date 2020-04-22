@@ -64,39 +64,6 @@ class SubjectActivity : DashboardChildActivity() {
             addHomeworkButton.visibility = View.VISIBLE
         }
 
-        addAppointmentButton.setOnClickListener {
-            AddLectureDialog.newInstance(schoolId, subject)
-                    .apply {
-                        onDismissListener = {
-                            appointmentsAdapter?.notifyDataSetChanged()
-                            SubjectsDao.add(schoolId, subject, OnCompleteListener { })
-                        }
-                    }
-                    .show(supportFragmentManager, "add_lecture_dialog")
-        }
-
-        addMaterialButton.setOnClickListener {
-            if (PermissionUtils.requestPermissionIfNeeded(
-                            this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            getString(R.string.permission_storage),
-                            RC_WRITE_PERMISSION
-                    )) {
-                pickFile(RESULT_ACTION_PICK_MATERIAL)
-            }
-        }
-
-        addHomeworkButton.setOnClickListener {
-            if (PermissionUtils.requestPermissionIfNeeded(
-                            this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            getString(R.string.permission_storage),
-                            RC_WRITE_PERMISSION
-                    )) {
-                pickFile(RESULT_ACTION_PICK_HOMEWORK)
-            }
-        }
-
         materialManager = FileManager.newInstance(this, "$schoolId/courses/${subject.classId}/subjects/${subject.name}/lectures/")
         homeworkManager = FileManager.newInstance(this, "$schoolId/courses/${subject.classId}/subjects/${subject.name}/exercises/")
     }
@@ -144,6 +111,45 @@ class SubjectActivity : DashboardChildActivity() {
 
         // Show course material
         showCourseContents()
+    }
+
+    fun onAddAppointmentClicked(v: View) {
+        AddLectureDialog.newInstance(schoolId, subject)
+                .apply {
+                    onDismissListener = {
+                        appointmentsAdapter?.notifyDataSetChanged()
+                        SubjectsDao.add(schoolId, subject, OnCompleteListener { })
+                    }
+                }
+                .show(supportFragmentManager, "add_lecture_dialog")
+    }
+
+    fun onAddMaterialClicked(v: View) {
+        if (PermissionUtils.requestPermissionIfNeeded(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        getString(R.string.permission_storage),
+                        RC_WRITE_PERMISSION
+                )) {
+            pickFile(RESULT_ACTION_PICK_MATERIAL)
+        }
+    }
+
+    fun onAddHomeworkClicked(v: View) {
+        if (PermissionUtils.requestPermissionIfNeeded(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        getString(R.string.permission_storage),
+                        RC_WRITE_PERMISSION
+                )) {
+            pickFile(RESULT_ACTION_PICK_HOMEWORK)
+        }
+    }
+
+    fun onNoticeBoardClicked(v: View) {
+        startSecurely(NoticeActivity::class.java, Intent().apply {
+            putExtra(CygnusApp.EXTRA_SCHOOL_SUBJECT, subject)
+        })
     }
 
     private fun showCourseContents() {

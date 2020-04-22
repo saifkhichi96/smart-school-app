@@ -37,24 +37,46 @@ object NoticeBoardDao {
     }
 
     /**
-     * Retrieves a list of subjects taught by a teacher.
+     * Adds a new post to a subject notice board.
      *
      * @param schoolId The id of the school.
-     * @param teacherId The email address of the teacher.
+     * @param classId The id of the class.
+     * @param post The post to add.
      * @param listener A listener for receiving response of the request.
      */
-    fun getSubjectsByTeacher(schoolId: String, teacherId: String, listener: OnSuccessListener<List<Subject>>) {
-        ClassesDao.getClassesAtSchool(schoolId, OnSuccessListener {
-            val subjects = ArrayList<Subject>()
-            it?.forEach { schoolClass ->
-                schoolClass.subjects?.values?.forEach { subject ->
-                    if (subject.teacherId == teacherId) {
-                        subjects += subject
+    fun add(schoolId: String, subject: Subject, post: NoticeBoardPost, listener: OnCompleteListener<Void?>) {
+        CygnusApp.refToSubjects(schoolId, subject.classId)
+                .child(subject.name)
+                .child("notices/")
+                .push()
+                .setValue(post)
+                .addOnCompleteListener(listener)
+    }
+
+    /**
+     * Retrieves a list of subjects taught in a school class.
+     *
+     * @param schoolId The id of the school.
+     * @param classId The id of the school class
+     * @param listener A listener for receiving response of the request.
+     */
+    fun getPostsBySubject(schoolId: String, subject: Subject, listener: OnSuccessListener<ArrayList<NoticeBoardPost>>) {
+        CygnusApp.refToSubjects(schoolId, subject.classId)
+                .child(subject.name)
+                .child("notices/")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val posts = ArrayList<NoticeBoardPost>()
+
+                        val t = object : GenericTypeIndicator<HashMap<String, NoticeBoardPost>>() {}
+                        snapshot.getValue(t)?.values?.toList()?.forEach { posts.add(it) }
+                        listener.onSuccess(posts)
                     }
-                }
-            }
-            listener.onSuccess(subjects)
-        })
+
+                    override fun onCancelled(error: DatabaseError) {
+                        listener.onSuccess(ArrayList())
+                    }
+                })
     }
 
     /**

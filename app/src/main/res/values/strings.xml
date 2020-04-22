@@ -46,6 +46,7 @@
   <string name="label_invite_multiple">Send Multiple Invites</string>
   <string name="label_manage_classes">Class\nManagement</string>
   <string name="label_manage_courses">Course\nManagement</string>
+  <string name="label_notice_board">Notice Board</string>
   <string name="label_profile">Manage your Cygnus Profile</string>
   <string name="label_revoke">Revoke</string>
   <string name="label_save">Save</string>
@@ -89,6 +90,7 @@
   <string name="course_material_head">Course Material</string>
   <string name="courses_head">Your Courses</string>
   <string name="emergency_head">Emergency Info</string>
+  <string name="homework_sheets_head">Homework Sheets</string>
   <string name="lecture_times_head">Lecture Times</string>
   <string name="staff_head">Staff</string>
   <string name="staff_desc">Invite your team members to join Cygnus. A magic link will be emailed which

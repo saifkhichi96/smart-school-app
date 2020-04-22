@@ -8,11 +8,13 @@ import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardChildActivity
 import com.cygnus.dao.NoticeBoardDao
 import com.cygnus.model.NoticeBoardPost
+import com.cygnus.model.Subject
 import com.cygnus.model.Teacher
 import com.cygnus.model.User
 import com.cygnus.view.MessageInputDialog
 import com.cygnus.view.NoticeBoardPostView
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_list.*
 
@@ -21,20 +23,29 @@ class NoticeActivity : DashboardChildActivity() {
     private lateinit var posts: ArrayList<NoticeBoardPost>
     private lateinit var adapter: PostAdapter
 
+    private var subject: Subject? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
+        val subject = intent.getSerializableExtra(CygnusApp.EXTRA_SCHOOL_SUBJECT) as Subject?
         val posts = intent.getParcelableArrayListExtra<NoticeBoardPost>(CygnusApp.EXTRA_NOTICE_POSTS)
-        if (posts == null) {
+        if (subject == null && posts == null) {
             finish()
             return
         }
 
-        this.posts = posts
-        this.adapter = PostAdapter(this, posts)
-        this.adapter.sort { o1, o2 ->
-            (o2 as NoticeBoardPost).postDate.compareTo((o1 as NoticeBoardPost).postDate)
+        this.posts = posts ?: ArrayList()
+        this.adapter = PostAdapter(this, this.posts)
+
+        if (subject != null) {
+            this.posts.clear()
+            this.subject = subject
+            NoticeBoardDao.getPostsBySubject(schoolId, subject, OnSuccessListener {
+                this.posts.addAll(it)
+                this.adapter.notifyDataSetChanged()
+            })
         }
 
         addButton.visibility = when (currentUser) {
@@ -58,14 +69,11 @@ class NoticeActivity : DashboardChildActivity() {
                         status.show()
 
                         val post = NoticeBoardPost(postContent = message, postAuthor = currentUser.name)
-                        NoticeBoardDao.add(schoolId, (currentUser as Teacher).classId!!, post, OnCompleteListener {
+                        val onCompleteListener = OnCompleteListener<Void?> {
                             if (it.isSuccessful) {
                                 status.setText("Message sent!")
                                 posts.add(post)
                                 adapter.notifyDataSetChanged()
-                                adapter.sort { o1, o2 ->
-                                    (o2 as NoticeBoardPost).postDate.compareTo((o1 as NoticeBoardPost).postDate)
-                                }
                             } else {
                                 status.setText(it.exception?.message ?: "Could not send the message at this time.")
                             }
@@ -73,7 +81,13 @@ class NoticeActivity : DashboardChildActivity() {
                             Handler().postDelayed({
                                 status.dismiss()
                             }, 1500L)
-                        })
+                        }
+
+                        if (subject != null) {
+                            NoticeBoardDao.add(schoolId, subject!!, post, onCompleteListener)
+                        } else {
+                            NoticeBoardDao.add(schoolId, (currentUser as Teacher).classId!!, post, onCompleteListener)
+                        }
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
@@ -81,7 +95,14 @@ class NoticeActivity : DashboardChildActivity() {
                 .show()
     }
 
-    private inner class PostAdapter(context: Context, posts: ArrayList<NoticeBoardPost>)
-        : ModelViewAdapter<NoticeBoardPost>(context, posts, NoticeBoardPostView::class)
+    private inner class PostAdapter(context: Context, val posts: ArrayList<NoticeBoardPost>)
+        : ModelViewAdapter<NoticeBoardPost>(context, posts, NoticeBoardPostView::class) {
+
+        override fun notifyDataSetChanged() {
+            posts.sortByDescending { it.postDate }
+            super.notifyDataSetChanged()
+        }
+
+    }
 
 }
