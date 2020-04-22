@@ -49,7 +49,7 @@ class TeacherDashboardActivity : DashboardActivity() {
         }
 
         // Set up click listeners
-        attendanceButton.setOnClickListener { startSecurely(AttendanceActivity::class.java) }
+        attendanceButton.setOnClickListener { startSecurely(MarkAttendanceActivity::class.java) }
         classAnnouncementsButton.setOnClickListener {
             val posts = ArrayList<NoticeBoardPost>()
             assignedClass?.notices?.values?.let { posts.addAll(it) }

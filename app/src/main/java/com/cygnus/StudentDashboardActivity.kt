@@ -49,8 +49,7 @@ class StudentDashboardActivity : DashboardActivity() {
             }
         }
 
-        // TODO: Set up attendance click listeners
-        attendanceButton.setOnClickListener { }
+        attendanceButton.setOnClickListener { startSecurely(AttendanceActivity::class.java) }
         classAnnouncementsButton.setOnClickListener {
             startSecurely(NoticeActivity::class.java, Intent().apply {
                 putParcelableArrayListExtra(CygnusApp.EXTRA_NOTICE_POSTS, classPosts)

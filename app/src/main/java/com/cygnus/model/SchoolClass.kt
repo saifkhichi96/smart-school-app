@@ -37,4 +37,6 @@ class SchoolClass(name: String, teacherId: String) : BaseModel() {
 
     var notices: HashMap<String, NoticeBoardPost>? = null
 
+    var attendance: HashMap<String, Attendance>? = null
+
 }

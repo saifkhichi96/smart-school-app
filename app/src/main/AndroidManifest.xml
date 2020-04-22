@@ -40,6 +40,11 @@
     <activity android:name=".StudentDashboardActivity"
               android:configChanges="orientation|screenSize"/>
 
+    <activity android:name=".AttendanceActivity"
+              android:label="Attendance"
+              android:parentActivityName=".StudentDashboardActivity"
+              android:configChanges="orientation|screenSize"/>
+
     <activity android:name=".TeacherDashboardActivity"
               android:configChanges="orientation|screenSize"/>
 
@@ -57,8 +62,8 @@
               android:parentActivityName=".TeacherDashboardActivity"
               android:configChanges="orientation|screenSize"/>
 
-    <activity android:name=".AttendanceActivity"
-              android:label="Attendance"
+    <activity android:name=".MarkAttendanceActivity"
+              android:label="Mark Attendance"
               android:parentActivityName=".TeacherDashboardActivity"
               android:configChanges="orientation|screenSize"/>
 

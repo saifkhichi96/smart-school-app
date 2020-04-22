@@ -54,13 +54,14 @@ class CygnusApp : Application() {
         // the refTo* functions return a reference to resources
         // in the Firebase database
         private val db get() = FirebaseDatabase.getInstance()
+        fun refToAttendance(schoolId: String, classId: String) = db.getReference("$schoolId/classes/$classId/attendance/")
+        fun refToClasses(schoolId: String) = db.getReference("$schoolId/classes/")
+        fun refToClassNoticeBoard(schoolId: String, classId: String) = db.getReference("$schoolId/classes/$classId/notices/")
+        fun refToInvites(schoolId: String) = db.getReference("$schoolId/invites/")
         fun refToSchoolId(userId: String) = db.getReference("user_schools/$userId/")
         fun refToSchoolName(schoolId: String) = db.getReference("$schoolId/name/")
-        fun refToInvites(schoolId: String) = db.getReference("$schoolId/invites/")
-        fun refToUsers(schoolId: String) = db.getReference("$schoolId/users/")
-        fun refToClasses(schoolId: String) = db.getReference("$schoolId/classes/")
         fun refToSubjects(schoolId: String, classId: String) = db.getReference("$schoolId/classes/$classId/subjects/")
-        fun refToClassNoticeBoard(schoolId: String, classId: String) = db.getReference("$schoolId/classes/$classId/notices/")
+        fun refToUsers(schoolId: String) = db.getReference("$schoolId/users/")
     }
 
 }
