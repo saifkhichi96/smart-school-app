@@ -152,6 +152,12 @@ class SubjectActivity : DashboardChildActivity() {
         })
     }
 
+    fun onAddGradesClicked(v: View) {
+        startSecurely(TestsActivity::class.java, Intent().apply {
+            putExtra(CygnusApp.EXTRA_SCHOOL_SUBJECT, subject)
+        })
+    }
+
     private fun showCourseContents() {
         showClassMaterial()
         showHomeworkExercises()

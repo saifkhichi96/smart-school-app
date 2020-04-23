@@ -71,6 +71,16 @@
               android:label="Subjects"
               android:configChanges="orientation|screenSize"/>
 
+    <activity android:name=".TestsActivity"
+              android:label="Grades"
+              android:parentActivityName=".SubjectActivity"
+              android:configChanges="orientation|screenSize"/>
+
+    <activity android:name=".TestActivity"
+              android:label="Add Grades"
+              android:parentActivityName=".SubjectActivity"
+              android:configChanges="orientation|screenSize"/>
+
     <activity android:name=".SchoolDashboardActivity"
               android:configChanges="orientation|screenSize"/>
 

@@ -42,11 +42,12 @@
   <string name="label_add">Add</string>
   <string name="label_announcements">Announcements</string>
   <string name="label_edit">Edit</string>
+  <string name="label_grades">Grades</string>
   <string name="label_invite">Invite</string>
   <string name="label_invite_multiple">Send Multiple Invites</string>
   <string name="label_manage_classes">Class\nManagement</string>
   <string name="label_manage_courses">Course\nManagement</string>
-  <string name="label_notice_board">Notice Board</string>
+  <string name="label_news">News</string>
   <string name="label_profile">Manage your Cygnus Profile</string>
   <string name="label_revoke">Revoke</string>
   <string name="label_save">Save</string>
@@ -65,7 +66,6 @@
   <string name="label_change_photo">Change Photo</string>
   <string name="label_change_password">Change Password</string>
   <string name="label_delete_account">Delete Account</string>
-  <string name="label_forgot_password">Forgot Password?</string>
 
   <!-- Section Headings -->
   <string name="about_head">About</string>
@@ -146,12 +146,7 @@
   <string name="error_unknown">Unknown error.</string>
 
   <!-- Menu Actions -->
-  <string name="menu_dashboard">Dashboard</string>
-  <string name="menu_timetable">Timetable</string>
-  <string name="menu_homework">Homework</string>
-  <string name="menu_notice_board">Notice Board</string>
   <string name="menu_account">Account</string>
-  <string name="menu_sign_out">Sign Out</string>
 
   <string-array name="blood_types">
     <item>O+</item>

@@ -41,6 +41,7 @@ class CygnusApp : Application() {
         const val EXTRA_SCHOOL_SUBJECT = "subject"
         const val EXTRA_STUDENT_ROLL_NO = "roll_no"
         const val EXTRA_STUDENT_CLASS_ID = "class_id"
+        const val EXTRA_TEST_NAME = "test_name"
         const val EXTRA_USER = "user"
 
         // the PARAM_* strings are used to define parameters
