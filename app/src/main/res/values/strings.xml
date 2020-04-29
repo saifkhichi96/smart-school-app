@@ -148,6 +148,12 @@
   <!-- Menu Actions -->
   <string name="menu_account">Account</string>
 
+  <string name="upload_title">Add to %s (%s)</string>
+  <string name="upload_confirm">Uploaded files cannot be edited or removed. Do you want to add \'%s\'?</string>
+  <string name="upload_started">Uploading…</string>
+  <string name="upload_success">File uploaded.</string>
+  <string name="upload_failure">Failed to upload file.</string>
+
   <string-array name="blood_types">
     <item>O+</item>
     <item>O-</item>

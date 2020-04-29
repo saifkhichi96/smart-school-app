@@ -25,6 +25,7 @@ import com.cygnus.view.AddLectureDialog
 import com.cygnus.view.LectureView
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_subject.*
 
@@ -207,22 +208,32 @@ class SubjectActivity : DashboardChildActivity() {
     }
 
     private fun uploadFile(fm: FileManager, filename: String, data: Uri, adapter: MaterialAdapter?) {
-        val status = Snackbar.make(contentList, "Uploading...", Snackbar.LENGTH_INDEFINITE)
-        status.show()
-        fm.upload(filename, data)
-                .addOnSuccessListener {
-                    it.metadata?.let { metadata ->
-                        adapter?.add(CourseFile(filename, metadata))
-                        adapter?.notifyDataSetChanged()
-                    }
+        MaterialAlertDialogBuilder(this)
+                .setTitle(String.format(getString(R.string.upload_title), subject.name, subject.classId))
+                .setMessage(String.format(getString(R.string.upload_confirm), filename))
+                .setPositiveButton(android.R.string.yes) { dialog, _ ->
+                    dialog.dismiss()
+                    val status = Snackbar.make(contentList, getString(R.string.upload_started), Snackbar.LENGTH_INDEFINITE)
+                    status.show()
+                    fm.upload(filename, data)
+                            .addOnSuccessListener {
+                                it.metadata?.let { metadata ->
+                                    adapter?.add(CourseFile(filename, metadata))
+                                    adapter?.notifyDataSetChanged()
+                                }
 
-                    status.setText("File uploaded.")
-                    Handler().postDelayed({ status.dismiss() }, 2500L)
+                                status.setText(getString(R.string.upload_success))
+                                Handler().postDelayed({ status.dismiss() }, 2500L)
+                            }
+                            .addOnFailureListener {
+                                status.setText(it.message ?: getString(R.string.upload_failure))
+                                Handler().postDelayed({ status.dismiss() }, 2500L)
+                            }
                 }
-                .addOnFailureListener {
-                    status.setText(it.message ?: "Failed to uploadFile file.")
-                    Handler().postDelayed({ status.dismiss() }, 2500L)
+                .setNegativeButton(android.R.string.cancel) { dialog, _ ->
+                    dialog.cancel()
                 }
+                .show()
     }
 
     private inner class AppointmentsAdapter(context: Context, lectures: List<Lecture>)
