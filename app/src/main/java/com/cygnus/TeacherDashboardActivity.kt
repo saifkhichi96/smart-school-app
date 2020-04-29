@@ -37,7 +37,7 @@ class TeacherDashboardActivity : DashboardActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard_teacher)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = ""
+        supportActionBar?.title = school
 
         // Only allow a signed in teacher to access this page
         currentTeacher = when (currentUser) {

@@ -22,7 +22,9 @@ import com.google.firebase.auth.FirebaseUser
  */
 abstract class SecureActivity : AppCompatActivity() {
 
-    protected lateinit var schoolId: String
+    private lateinit var schoolDetails: Pair<String, String>
+    protected val schoolId: String get() = schoolDetails.first
+    protected val school: String get() = schoolDetails.second
     protected lateinit var currentUser: User
 
     /**
@@ -42,7 +44,7 @@ abstract class SecureActivity : AppCompatActivity() {
             else -> return finish()                                 // else finish activity
         }
 
-        schoolId = intent.getStringExtra(CygnusApp.EXTRA_SCHOOL) ?: return finish()
+        schoolDetails = intent.getSerializableExtra(CygnusApp.EXTRA_SCHOOL) as Pair<String, String>? ?: return finish()
     }
 
     /**
@@ -72,7 +74,7 @@ abstract class SecureActivity : AppCompatActivity() {
     fun startSecurely(target: Class<out SecureActivity>, src: Intent? = null) {
         startActivity(Intent(this, target).apply {
             this.putExtra(CygnusApp.EXTRA_USER, currentUser)
-            this.putExtra(CygnusApp.EXTRA_SCHOOL, schoolId)
+            this.putExtra(CygnusApp.EXTRA_SCHOOL, schoolDetails)
             src?.let { this.putExtras(it) }
         })
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)

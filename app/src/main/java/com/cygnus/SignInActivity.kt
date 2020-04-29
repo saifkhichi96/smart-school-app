@@ -101,8 +101,8 @@ class SignInActivity : AppCompatActivity() {
             // when a regular user signs in, we first need to find out which school
             // they are associated with by retrieving their school's id
             else SchoolDao.getSchoolByUser(firebaseUser.uid, OnSuccessListener {
-                it?.let { schoolId ->
-                    onSchoolDetailsReceived(schoolId, firebaseUser)
+                it?.let { schoolDetails ->
+                    onSchoolDetailsReceived(schoolDetails, firebaseUser)
                 } ?: onFailure(null)
             })
         })
@@ -111,9 +111,9 @@ class SignInActivity : AppCompatActivity() {
     /**
      * Callback for when details of [firebaseUser]'s school are received.
      */
-    private fun onSchoolDetailsReceived(schoolId: String, firebaseUser: FirebaseUser) {
-        UsersDao.getUserById(schoolId, firebaseUser.uid, OnSuccessListener {
-            it?.let { user -> onSignedIn(user, schoolId) }
+    private fun onSchoolDetailsReceived(schoolDetails: Pair<String, String>, firebaseUser: FirebaseUser) {
+        UsersDao.getUserById(schoolDetails.first, firebaseUser.uid, OnSuccessListener {
+            it?.let { user -> onSignedIn(user, schoolDetails) }
         })
     }
 
@@ -122,7 +122,7 @@ class SignInActivity : AppCompatActivity() {
      *
      * User is automatically redirected to the appropriate screen in the app.
      */
-    private fun onSignedIn(user: User, schoolId: String) {
+    private fun onSignedIn(user: User, schoolId: Pair<String, String>) {
         startActivity(Intent(
                 applicationContext,
                 when (user) {
@@ -149,7 +149,7 @@ class SignInActivity : AppCompatActivity() {
                 account.uid,
                 name,
                 Credentials(account.email!!, "")
-        ), account.uid)
+        ), Pair(account.uid, name))
     }
 
     /**

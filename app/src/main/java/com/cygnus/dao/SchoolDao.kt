@@ -23,11 +23,18 @@ object SchoolDao {
      * @param userId The id of the user whose school is to be fetched.
      * @param listener A listener for receiving response of the request.
      */
-    fun getSchoolByUser(userId: String, listener: OnSuccessListener<String?>) {
+    fun getSchoolByUser(userId: String, listener: OnSuccessListener<Pair<String, String>?>) {
         CygnusApp.refToSchoolId(userId)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
-                        listener.onSuccess(snapshot.value?.toString())
+                        val schoolId = snapshot.value?.toString()
+                        schoolId?.let {
+                            getSchoolName(schoolId, OnSuccessListener { name ->
+                                name?.let {
+                                    listener.onSuccess(Pair(schoolId, name))
+                                } ?: listener.onSuccess(null)
+                            })
+                        } ?: listener.onSuccess(null)
                     }
 
                     override fun onCancelled(error: DatabaseError) {
