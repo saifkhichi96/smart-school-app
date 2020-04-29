@@ -3,6 +3,7 @@ package com.cygnus.sign_up
 import android.content.Intent
 import android.os.Bundle
 import android.util.SparseArray
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.cygnus.CygnusApp
@@ -15,6 +16,7 @@ import com.cygnus.model.*
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import kotlin.reflect.KClass
@@ -112,6 +114,8 @@ class SignUpActivity : AppCompatActivity() {
             )
         })
         wizardView.setOnSubmitListener {
+            findViewById<Button>(R.id.nextButton).text = "Signing up..."
+            findViewById<Button>(R.id.nextButton).isEnabled = false
             onSubmit(it)
         }
     }
@@ -179,18 +183,20 @@ class SignUpActivity : AppCompatActivity() {
      * and has a `Pending` state.
      */
     private fun onUserCreated(user: User, password: String) {
-        InvitesDao.get(
-                referralCode,
-                user.email,
-                OnSuccessListener {
-                    invite = it
-                    when (invite?.status) {
-                        getString(R.string.status_invite_pending) -> onVerificationSuccess(user, password)
-                        getString(R.string.status_invite_accepted) -> onFailure(getString(R.string.error_invitation_accepted))
-                        else -> onFailure()
+        FirebaseAuth.getInstance().signInAnonymously().addOnSuccessListener {
+            InvitesDao.get(
+                    referralCode,
+                    user.email,
+                    OnSuccessListener {
+                        invite = it
+                        when (invite?.status) {
+                            getString(R.string.status_invite_pending) -> onVerificationSuccess(user, password)
+                            getString(R.string.status_invite_accepted) -> onFailure(getString(R.string.error_invitation_accepted))
+                            else -> onFailure()
+                        }
                     }
-                }
-        )
+            )
+        }
     }
 
     /**
@@ -200,8 +206,11 @@ class SignUpActivity : AppCompatActivity() {
      */
     private fun onVerificationSuccess(user: User, password: String) {
         val auth = FirebaseAuth.getInstance()
+        val anonUser = auth.currentUser
+
         if (auth.isSignInWithEmailLink(emailLink)) {
-            auth.signInWithEmailLink(user.email, emailLink)
+            val credential = EmailAuthProvider.getCredentialWithLink(user.email, emailLink)
+            anonUser!!.linkWithCredential(credential)
                     .addOnSuccessListener { result ->
                         result.user?.let { firebaseUser ->
                             user.id = firebaseUser.uid
@@ -240,6 +249,8 @@ class SignUpActivity : AppCompatActivity() {
      */
     private fun onFailure(error: String? = null) {
         Toast.makeText(this, error ?: getString(R.string.error_invitation_not_found), Toast.LENGTH_LONG).show()
+        findViewById<Button>(R.id.nextButton).text = "Sign Up"
+        findViewById<Button>(R.id.nextButton).isEnabled = true
     }
 
     /**
