@@ -94,6 +94,37 @@
               app:icon="@drawable/ic_announcements"
               app:iconSize="24dp"/>
 
+          <LinearLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="16dp"
+              android:orientation="vertical">
+
+            <com.google.android.material.textview.MaterialTextView
+                style="@style/TextAppearance.MaterialComponents.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="true"
+                android:textSize="10sp"
+                android:text="@string/label_class_teacher"
+                tools:ignore="SmallSp"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/classTeacherName"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/classTeacherEmail"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoLink="email"
+                android:textColorLink="?android:attr/textColorPrimary"/>
+
+          </LinearLayout>
+
         </LinearLayout>
 
       </com.google.android.material.card.MaterialCardView>

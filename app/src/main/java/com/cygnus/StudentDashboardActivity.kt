@@ -9,6 +9,7 @@ import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardActivity
 import com.cygnus.dao.NoticeBoardDao
 import com.cygnus.dao.SubjectsDao
+import com.cygnus.dao.UsersDao
 import com.cygnus.model.NoticeBoardPost
 import com.cygnus.model.Student
 import com.cygnus.model.Subject
@@ -62,6 +63,13 @@ class StudentDashboardActivity : DashboardActivity() {
                 OnSuccessListener {
                     classPosts = it
                 })
+
+        UsersDao.getTeacherByClass(schoolId, currentStudent.classId, OnSuccessListener {
+            it?.let { teacher ->
+                classTeacherName.text = teacher.name
+                classTeacherEmail.text = teacher.email
+            }
+        })
     }
 
     /**

@@ -188,4 +188,13 @@ object UsersDao {
                 })
     }
 
+    fun getTeacherByClass(schoolId: String, classId: String, listener: OnSuccessListener<in User?>) {
+        ClassesDao.getClassesAtSchool(schoolId, OnSuccessListener { classes ->
+            classes?.find { it.name == classId }?.teacherId?.let { teacherId ->
+                getUserByEmail(schoolId, teacherId, listener)
+            } ?: listener.onSuccess(null)
+        })
+
+    }
+
 }

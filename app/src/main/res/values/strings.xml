@@ -41,6 +41,7 @@
   <!-- Button Labels -->
   <string name="label_add">Add</string>
   <string name="label_announcements">Announcements</string>
+  <string name="label_class_teacher">Class Teacher</string>
   <string name="label_edit">Edit</string>
   <string name="label_grades">Grades</string>
   <string name="label_invite">Invite</string>
