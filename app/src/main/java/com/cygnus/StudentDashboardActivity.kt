@@ -19,6 +19,7 @@ import com.cygnus.view.SubjectView
 import com.google.android.gms.tasks.OnSuccessListener
 import kotlinx.android.synthetic.main.activity_dashboard_student.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * StudentDashboardActivity is the students' homepage.
@@ -98,6 +99,15 @@ class StudentDashboardActivity : DashboardActivity() {
         var today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2
         if (today < 0) today = 7
         timetableDay.selectTab(timetableDay.getTabAt(today))
+
+        gradesButton.setOnClickListener {
+            val subjectNames = ArrayList<String>()
+            subjects.forEach { subjectNames.add(it.name) }
+            startSecurely(ReportCardActivity::class.java, Intent().apply {
+                putStringArrayListExtra(CygnusApp.EXTRA_SCHOOL_SUBJECT, subjectNames)
+                putExtra(CygnusApp.EXTRA_STUDENT_CLASS_ID, currentStudent.classId)
+            })
+        }
     }
 
     private inner class SubjectAdapter(context: Context, val subjects: List<Subject>)

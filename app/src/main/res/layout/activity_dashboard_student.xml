@@ -84,6 +84,17 @@
               app:iconSize="24dp"/>
 
           <com.google.android.material.button.MaterialButton
+              android:id="@+id/gradesButton"
+              style="@style/Widget.MaterialComponents.Button.TextButton"
+              android:layout_width="wrap_content"
+              android:layout_height="32dp"
+              android:padding="0dp"
+              android:text="@string/label_see_grades"
+              android:textAllCaps="false"
+              app:icon="@drawable/ic_grades"
+              app:iconSize="24dp"/>
+
+          <com.google.android.material.button.MaterialButton
               android:id="@+id/classAnnouncementsButton"
               style="@style/Widget.MaterialComponents.Button.TextButton"
               android:layout_width="wrap_content"
