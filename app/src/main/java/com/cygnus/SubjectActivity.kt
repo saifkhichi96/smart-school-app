@@ -9,15 +9,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.view.ViewGroup
 import co.aspirasoft.adapter.ModelViewAdapter
 import co.aspirasoft.util.PermissionUtils
 import com.cygnus.core.DashboardChildActivity
 import com.cygnus.dao.SubjectsDao
 import com.cygnus.dao.UsersDao
-import com.cygnus.model.CourseFile
-import com.cygnus.model.Lecture
-import com.cygnus.model.Subject
-import com.cygnus.model.User
+import com.cygnus.model.*
 import com.cygnus.storage.FileManager
 import com.cygnus.storage.FileUtils.getLastPathSegmentOnly
 import com.cygnus.storage.MaterialAdapter
@@ -236,8 +234,34 @@ class SubjectActivity : DashboardChildActivity() {
                 .show()
     }
 
-    private inner class AppointmentsAdapter(context: Context, lectures: List<Lecture>)
-        : ModelViewAdapter<Lecture>(context, lectures, LectureView::class)
+    private inner class AppointmentsAdapter(context: Context, val lectures: List<Lecture>)
+        : ModelViewAdapter<Lecture>(context, lectures, LectureView::class) {
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val v = super.getView(position, convertView, parent)
+            if (currentUser is Teacher) {
+                v.findViewById<View>(R.id.deleteButton)?.apply {
+                    this.visibility = View.VISIBLE
+                    this.setOnClickListener {
+                        MaterialAlertDialogBuilder(context)
+                                .setTitle("Remove lecture time?")
+                                .setPositiveButton("Delete") { dialog, _ ->
+                                    subject.appointments.remove(lectures[position])
+                                    notifyDataSetChanged()
+                                    SubjectsDao.add(schoolId, subject, OnCompleteListener { })
+                                    dialog.dismiss()
+                                }
+                                .setNegativeButton(android.R.string.cancel) { dialog, _ ->
+                                    dialog.cancel()
+                                }
+                                .show()
+                    }
+                }
+            }
+            return v
+        }
+
+    }
 
     companion object {
         private const val RESULT_ACTION_PICK_MATERIAL = 100
