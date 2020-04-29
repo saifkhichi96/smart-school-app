@@ -108,7 +108,7 @@ class TeacherDashboardActivity : DashboardActivity() {
     private fun onSubjectsReceived(subjects: List<Subject>) {
         coursesList.adapter = SubjectAdapter(this, subjects)
 
-        timetableView.adapter = TimetablePagerAdapter(supportFragmentManager, subjects)
+        timetableView.adapter = TimetablePagerAdapter(supportFragmentManager, subjects, true)
         timetableDay.setupWithViewPager(timetableView)
 
         var today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2
