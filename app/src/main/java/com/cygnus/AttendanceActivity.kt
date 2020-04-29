@@ -2,6 +2,7 @@ package com.cygnus
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import co.aspirasoft.adapter.ModelViewAdapter
 import com.cygnus.core.DashboardChildActivity
 import com.cygnus.dao.AttendanceDao
@@ -34,14 +35,24 @@ class AttendanceActivity : DashboardChildActivity() {
 
         adapter = AttendanceAdapter(this, attendanceRecords)
         contentList.adapter = adapter
+        addButton.visibility = View.GONE
     }
 
     override fun updateUI(currentUser: User) {
         AttendanceDao.getByStudent(schoolId, currentStudent, OnSuccessListener { savedRecords ->
             attendanceRecords.clear()
-            savedRecords?.let { attendanceRecords.addAll(it) }
+            savedRecords?.let {
+                supportActionBar?.title = String.format("%.1f%% Attendance", calculateAttendancePercentage(it))
+                attendanceRecords.addAll(it)
+            }
             adapter.notifyDataSetChanged()
         })
+    }
+
+    private fun calculateAttendancePercentage(list: List<AttendanceRecord>): Float {
+        val presences = list.filter { it.attendance }.size
+        val total = list.size
+        return 100F * presences / total
     }
 
     private inner class AttendanceAdapter(context: Context, val records: List<AttendanceRecord>)
