@@ -103,6 +103,12 @@ class StudentDashboardActivity : DashboardActivity() {
                     putExtra(CygnusApp.EXTRA_SCHOOL_SUBJECT, subject)
                 })
             }
+
+            (v as SubjectView).apply {
+                updateWithSchool(schoolId)
+                setSubjectTeacherVisible(true)
+                setSubjectClassVisible(false)
+            }
             return v
         }
 

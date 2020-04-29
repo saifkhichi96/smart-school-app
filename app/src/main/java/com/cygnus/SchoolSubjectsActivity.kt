@@ -96,7 +96,7 @@ class SchoolSubjectsActivity : DashboardChildActivity() {
                 }
                 dialog.show(supportFragmentManager, dialog.toString())
             }
-            (v as SubjectView).showTeacher()
+            (v as SubjectView).setSubjectTeacherVisible(true)
             return v
         }
 
