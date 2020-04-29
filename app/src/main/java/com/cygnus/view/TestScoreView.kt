@@ -40,7 +40,9 @@ class TestScoreView : BaseView<TestScore> {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                model.theoryMarks = s?.toString()?.toIntOrNull() ?: 0
+                if (studentRollNoView.text == model.studentRollNo) {
+                    model.theoryMarks = s?.toString()?.toIntOrNull() ?: 0
+                }
             }
         })
         practicalMarksField.setText(model.practicalMarks.toString())
@@ -48,7 +50,9 @@ class TestScoreView : BaseView<TestScore> {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                model.practicalMarks = s.toString().toIntOrNull() ?: 0
+                if (studentRollNoView.text == model.studentRollNo) {
+                    model.practicalMarks = s.toString().toIntOrNull() ?: 0
+                }
             }
         })
     }

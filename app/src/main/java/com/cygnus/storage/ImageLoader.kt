@@ -34,13 +34,23 @@ object ImageLoader {
             FileManager.newInstance(context, "users/${user.id}/").download(
                     filename,
                     OnSuccessListener {
-                        Glide.with(context)
-                                .load(it)
-                                .skipMemoryCache(true)
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                .into(target)
+                        try {
+                            Glide.with(context)
+                                    .load(it)
+                                    .skipMemoryCache(true)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .into(target)
+                        } catch (ignored: Exception) {
+
+                        }
                     },
-                    OnFailureListener { Glide.with(context).load(R.drawable.ph_student).into(target) },
+                    OnFailureListener {
+                        try {
+                            Glide.with(context).load(R.drawable.ph_student).into(target)
+                        } catch (ignored: Exception) {
+
+                        }
+                    },
                     skip
             )
 

@@ -15,7 +15,7 @@ class CygnusApp : Application() {
         super.onCreate()
 
         // Enabling persistence speeds up app by caching data locally
-        db.setPersistenceEnabled(true)
+        // db.setPersistenceEnabled(true)
 
         STATUS_INVITE_PENDING = getString(R.string.status_invite_pending)
         STATUS_INVITE_ACCEPTED = getString(R.string.status_invite_accepted)
