@@ -45,6 +45,11 @@
               android:parentActivityName=".StudentDashboardActivity"
               android:configChanges="orientation|screenSize"/>
 
+    <activity android:name=".ReportCardActivity"
+              android:label="Report Card"
+              android:parentActivityName=".StudentDashboardActivity"
+              android:configChanges="orientation|screenSize"/>
+
     <activity android:name=".TeacherDashboardActivity"
               android:configChanges="orientation|screenSize"/>
 

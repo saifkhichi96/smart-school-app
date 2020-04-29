@@ -47,7 +47,7 @@ class TestsActivity : DashboardChildActivity() {
     }
 
     override fun updateUI(currentUser: User) {
-        TestsDao.getTestsBySubject(schoolId, subject, OnSuccessListener {
+        TestsDao.getTestsBySubject(schoolId, subject.name, subject.classId, OnSuccessListener {
             this.tests.clear()
             it?.let { savedTests -> tests.addAll(savedTests) }
 

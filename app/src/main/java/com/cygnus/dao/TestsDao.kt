@@ -44,9 +44,9 @@ object TestsDao {
                 })
     }
 
-    fun getTestsBySubject(schoolId: String, subject: Subject, listener: OnSuccessListener<List<Test>?>) {
-        CygnusApp.refToSubjects(schoolId, subject.classId)
-                .child(subject.name)
+    fun getTestsBySubject(schoolId: String, subject: String, classId: String, listener: OnSuccessListener<List<Test>?>) {
+        CygnusApp.refToSubjects(schoolId, classId)
+                .child(subject)
                 .child("grades/")
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
