@@ -14,6 +14,7 @@ import co.aspirasoft.view.WizardViewStep
 import com.cygnus.R
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import java.util.*
 
 class ContactInfoStep : WizardViewStep("Create Profile") {
 
@@ -67,7 +68,7 @@ class ContactInfoStep : WizardViewStep("Create Profile") {
                 stateField.isNotBlank(true) &&
                 countryField.isNotBlank(true) &&
                 phoneField.isNotBlank(true)) {
-            val email = emailField.text.toString().trim()
+            val email = emailField.text.toString().trim().toLowerCase(Locale.getDefault())
             val street = streetField.text.toString().trim()
             val city = cityField.text.toString().trim()
             val state = stateField.text.toString().trim()

@@ -8,6 +8,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.parcel.Parcelize
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 /**
  * A data access class to read details of sent invites.
@@ -71,7 +74,7 @@ object InvitesDao {
                         invites.add(Invite(
                                 entry.key,
                                 entry.value.split(":")[0],
-                                entry.value.split(":")[1],
+                                entry.value.split(":")[1].toLowerCase(Locale.getDefault()),
                                 entry.value.split(":")[2]
                         ))
                     }

@@ -10,6 +10,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.Query
+import java.util.*
 
 /**
  * InvitationTask is a [FirebaseTask] for sending invites.
@@ -22,13 +23,14 @@ import com.google.firebase.database.Query
 class InvitationTask(
         val context: Context,
         private val referral: String,
-        private val inviteeEmail: String,
+        inviteeEmail: String,
         private val sender: String,
         private val classId: String? = null,
         private val rollNo: String? = null
 ) : FirebaseTask() {
 
     private val isTeacherInvite: Boolean get() = rollNo == null || classId == null
+    private val inviteeEmail = inviteeEmail.toLowerCase(Locale.getDefault())
 
     /**
      * Checks if the invitee has previously been invited.
