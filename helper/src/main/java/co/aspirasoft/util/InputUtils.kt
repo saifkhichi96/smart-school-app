@@ -1,5 +1,8 @@
 package co.aspirasoft.util
 
+import android.app.Activity
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -44,6 +47,15 @@ object InputUtils {
         val pattern: Pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE)
         val matcher: Matcher = pattern.matcher(this)
         return matcher.matches()
+    }
+
+    fun Activity.hideKeyboard() {
+        val imm: InputMethodManager = this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        var view = this.currentFocus
+        if (view == null) {
+            view = View(this)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
 }

@@ -61,15 +61,13 @@ class InvitationTask(
      * Generates and sends an invitation.
      */
     override fun onQuerySuccess(): Task<Void?> {
-        FirebaseAuth.getInstance()
+        return FirebaseAuth.getInstance()
                 .sendSignInLinkToEmail(inviteeEmail, when {
                     isTeacherInvite -> DynamicLinksUtils.createSignUpActionForTeacher(referral)
                     else -> DynamicLinksUtils.createSignUpActionForStudent(referral, rollNo!!, classId!!)
                 }).addOnSuccessListener {
                     InvitesDao.add(referral, inviteeEmail, sender)
                 }
-
-        return DummyTask(null)
     }
 
     /**

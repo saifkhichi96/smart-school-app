@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
 import androidx.core.view.iterator
+import co.aspirasoft.util.InputUtils.hideKeyboard
 import co.aspirasoft.util.InputUtils.isNotBlank
 import co.aspirasoft.util.InputUtils.showError
 import com.cygnus.core.DashboardActivity
@@ -92,6 +93,7 @@ class SchoolDashboardActivity : DashboardActivity() {
      */
     fun onInviteSingleClicked(v: View) {
         if (emailField.isNotBlank()) {
+            hideKeyboard()
             val email = emailField.text.toString().trim()
             val progressDialog = ProgressDialog.show(
                     this,
@@ -120,6 +122,7 @@ class SchoolDashboardActivity : DashboardActivity() {
      * sent. Status of each sent invite is displayed.
      */
     fun onInviteMultipleClicked(v: View) {
+        hideKeyboard()
         EmailsInputDialog(this)
                 .setOnEmailsReceivedListener { emails ->
                     inviteMultipleEmails(emails)
@@ -134,6 +137,7 @@ class SchoolDashboardActivity : DashboardActivity() {
      * invitations.
      */
     fun onInvitedStaffClicked(v: View) {
+        hideKeyboard()
         if (invitedStaff.size > 0) {
             startSecurely(SchoolTeachersActivity::class.java, Intent().apply {
                 putExtra(CygnusApp.EXTRA_INVITE_STATUS, getString(R.string.status_invite_pending))
@@ -151,6 +155,7 @@ class SchoolDashboardActivity : DashboardActivity() {
      * their invitations and joined the app.
      */
     fun onJoinedStaffClicked(v: View) {
+        hideKeyboard()
         if (joinedStaff.size > 0) {
             startSecurely(SchoolTeachersActivity::class.java, Intent().apply {
                 putExtra(CygnusApp.EXTRA_INVITE_STATUS, getString(R.string.status_invite_accepted))
@@ -169,7 +174,7 @@ class SchoolDashboardActivity : DashboardActivity() {
     private fun inviteSingleEmail(email: String, listener: OnCompleteListener<Void?>? = null) {
         InvitationTask(this, currentUser.id, email, schoolId)
                 .start { task ->
-                    if (task.isSuccessful) {
+                    if (task.isSuccessful || task.exception == null) {
                         Toast.makeText(this@SchoolDashboardActivity, getString(R.string.status_invitation_sent), Toast.LENGTH_LONG).show()
                         emailField.setText("")
                     } else {
