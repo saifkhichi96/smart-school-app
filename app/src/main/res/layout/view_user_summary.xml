@@ -51,7 +51,7 @@
       android:text="@string/ph_type"/>
 
   <com.google.android.material.button.MaterialButton
-      style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+      style="@style/Widget.MaterialComponents.Button"
       android:id="@+id/profileButton"
       android:layout_width="wrap_content"
       android:layout_height="42dp"

@@ -4,12 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Gravity
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import com.cygnus.CygnusApp
 import com.cygnus.ProfileActivity
 import com.cygnus.R
+import com.cygnus.SignInActivity
 import com.cygnus.core.SecureActivity
+import com.cygnus.model.Credentials
 import com.cygnus.model.User
+import com.cygnus.storage.AuthManager
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.dialog_account_switcher.*
 
 /**
@@ -53,6 +58,13 @@ class AccountSwitcher private constructor(private val activity: SecureActivity) 
             dismiss()
         }
 
+        addAccountButton.setOnClickListener {
+            activity.startActivity(Intent(activity, SignInActivity::class.java).apply {
+                putExtra(CygnusApp.EXTRA_NEW_SIGN_IN, true)
+            })
+            activity.finish()
+        }
+
         // TODO: Handle clicks on `Privacy` and `ToS` buttons.
         privacyButton.setOnClickListener {
 
@@ -67,6 +79,24 @@ class AccountSwitcher private constructor(private val activity: SecureActivity) 
                 putExtra(CygnusApp.EXTRA_PROFILE_USER, it)
             })
             dismiss()
+        }
+
+        val signedInUsers = AuthManager.listAll().values
+        val credentials = ArrayList<Credentials>()
+        val emails = ArrayList<String>()
+        signedInUsers.forEach {
+            if (it.email != FirebaseAuth.getInstance().currentUser?.email) {
+                emails.add(it.email)
+                credentials.add(it)
+            }
+        }
+
+        accountsList.adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, emails)
+        accountsList.setOnItemClickListener { parent, view, position, id ->
+            activity.startActivity(Intent(activity, SignInActivity::class.java).apply {
+                putExtra(CygnusApp.EXTRA_EXISTING_SIGN_IN, credentials[position])
+            })
+            activity.finish()
         }
     }
 

@@ -2,6 +2,7 @@ package com.cygnus
 
 import android.app.Application
 import com.google.firebase.database.FirebaseDatabase
+import com.orhanobut.hawk.Hawk
 
 /**
  * An [Application] subclass represents this application.
@@ -13,6 +14,9 @@ class CygnusApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        // Hawk is used to manage SharedPreferences
+        Hawk.init(this).build()
 
         // Enabling persistence speeds up app by caching data locally
         // db.setPersistenceEnabled(true)
@@ -39,6 +43,8 @@ class CygnusApp : Application() {
         const val EXTRA_REFERRAL_CODE = "referral_code"
         const val EXTRA_SCHOOL = "school"
         const val EXTRA_SCHOOL_SUBJECT = "subject"
+        const val EXTRA_NEW_SIGN_IN = "new_sign_in"
+        const val EXTRA_EXISTING_SIGN_IN = "after_sign_in"
         const val EXTRA_STUDENT_ROLL_NO = "roll_no"
         const val EXTRA_STUDENT_CLASS_ID = "class_id"
         const val EXTRA_TEST_NAME = "test_name"

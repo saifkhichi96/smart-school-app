@@ -12,6 +12,7 @@ import com.cygnus.model.Credentials
 import com.cygnus.model.School
 import com.cygnus.model.Teacher
 import com.cygnus.model.User
+import com.cygnus.storage.AuthManager
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -29,15 +30,22 @@ import kotlinx.android.synthetic.main.activity_sign_in.*
  */
 class SignInActivity : AppCompatActivity() {
 
+    private var isNewSignIn: Boolean = false
+
     private val auth = FirebaseAuth.getInstance()
+    private var credentials: Credentials? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
 
+        // Are we adding a new account?
+        isNewSignIn = intent.getBooleanExtra(CygnusApp.EXTRA_NEW_SIGN_IN, false)
+        credentials = intent.getSerializableExtra(CygnusApp.EXTRA_EXISTING_SIGN_IN) as Credentials?
+
         // Show a welcome message if this is a new user
         if (intent.getBooleanExtra(CygnusApp.EXTRA_NEW_SIGN_UP, false)) {
-            auth.signOut()
+            isNewSignIn = true
             Snackbar.make(
                     signInButton,
                     "Congratulations! Use your email/password to sign into your new account now.",
@@ -54,7 +62,18 @@ class SignInActivity : AppCompatActivity() {
      */
     override fun onStart() {
         super.onStart()
-        auth.currentUser?.let { onAuthSuccess(it) }
+        auth.signOut()
+        if (credentials != null) {
+            signInWithCredentials(credentials!!)
+        } else if (!isNewSignIn) {
+            val signedInUsers = AuthManager.listAll()
+            if (signedInUsers.isEmpty()) {
+                isNewSignIn = true
+            } else {
+                val uid = signedInUsers.keys.elementAt(0)
+                signedInUsers[uid]?.let { signInWithCredentials(it) }
+            }
+        }
     }
 
     /**
@@ -68,23 +87,27 @@ class SignInActivity : AppCompatActivity() {
         if (emailField.isNotBlank(true) && passwordField.isNotBlank(true)) {
             val email = emailField.text.toString().trim()
             val password = passwordField.text.toString().trim()
-
-            val progressDialog = ProgressDialog.show(
-                    this,
-                    "Please Wait",
-                    "Signing you in...",
-                    true
-            )
-            auth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener {
-                        progressDialog.cancel()
-                        if (it.isSuccessful) {
-                            it.result?.user?.let { firebaseUser -> onAuthSuccess(firebaseUser) }
-                        } else {
-                            it.exception?.let { ex -> onFailure(ex) }
-                        }
-                    }
+            credentials = Credentials(email, password)
+            signInWithCredentials(credentials!!)
         }
+    }
+
+    private fun signInWithCredentials(credentials: Credentials) {
+        val progressDialog = ProgressDialog.show(
+                this,
+                "Please Wait",
+                "Signing you in...",
+                true
+        )
+        auth.signInWithEmailAndPassword(credentials.email, credentials.password)
+                .addOnCompleteListener {
+                    progressDialog.cancel()
+                    if (it.isSuccessful) {
+                        it.result?.user?.let { firebaseUser -> onAuthSuccess(firebaseUser) }
+                    } else {
+                        it.exception?.let { ex -> onFailure(ex) }
+                    }
+                }
     }
 
     /**
@@ -122,7 +145,8 @@ class SignInActivity : AppCompatActivity() {
      *
      * User is automatically redirected to the appropriate screen in the app.
      */
-    private fun onSignedIn(user: User, schoolId: Pair<String, String>) {
+    private fun onSignedIn(user: User, schoolDetails: Pair<String, String>) {
+        credentials?.let { AuthManager.add(user.id, it) }
         startActivity(Intent(
                 applicationContext,
                 when (user) {
@@ -132,7 +156,7 @@ class SignInActivity : AppCompatActivity() {
                 }
         ).apply {
             putExtra(CygnusApp.EXTRA_USER, user)
-            putExtra(CygnusApp.EXTRA_SCHOOL, schoolId)
+            putExtra(CygnusApp.EXTRA_SCHOOL, schoolDetails)
         })
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         finish()

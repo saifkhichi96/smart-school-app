@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import kotlin.reflect.KClass
 
@@ -213,6 +214,11 @@ class SignUpActivity : AppCompatActivity() {
             anonUser!!.linkWithCredential(credential)
                     .addOnSuccessListener { result ->
                         result.user?.let { firebaseUser ->
+                            // Save display name
+                            firebaseUser.updateProfile(UserProfileChangeRequest.Builder().apply {
+                                this.displayName = user.name
+                            }.build())
+
                             user.id = firebaseUser.uid
                             UsersDao.add(referralCode, user, invite!!, OnCompleteListener {
                                 if (it.isSuccessful) {
